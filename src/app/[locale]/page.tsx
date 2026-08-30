@@ -125,7 +125,7 @@ export default async function Page({
               )
             }
           />
-          <Archive locale={l} variant="featured" />
+          <Archive locale={l} />
         </div>
       </section>
 

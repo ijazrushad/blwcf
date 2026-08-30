@@ -9,8 +9,6 @@ import s from './Archive.module.css';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-export type ArchiveVariant = 'exact' | 'trueRatio' | 'featured';
-
 /** The four plates the mockup places in the broken grid, in its order. */
 const FEATURED_IDS = [
   'joy-bangla',
@@ -25,16 +23,10 @@ function byId(id: string) {
   return archive.find((a) => a.id === id)!;
 }
 
-export default function Archive({
-  locale,
-  variant = 'trueRatio',
-}: {
-  locale: Locale;
-  variant?: ArchiveVariant;
-}) {
+export default function Archive({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState<number | null>(null);
 
-  /* the grid always carries the mockup's four plates; the reel carries the rest */
+  /* the grid carries the mockup's four plates; the reel carries them all */
   const shown = FEATURED_IDS.map(byId);
 
   /* the lightbox walks the whole archive regardless of what the grid shows */
@@ -43,7 +35,7 @@ export default function Archive({
 
   return (
     <>
-      <div className={`g12 ${s.grid} ${s[variant]}`}>
+      <div className={`g12 ${s.grid}`}>
         {shown.map((item, i) => (
           <figure
             key={item.id}
@@ -52,13 +44,8 @@ export default function Archive({
           >
             <div
               className={s.im}
-              /* trueRatio drives height from the real scan; exact uses the
-                 fixed ratio the mockup hardcoded in CSS */
-              style={
-                variant === 'exact'
-                  ? undefined
-                  : { aspectRatio: `${item.width} / ${item.height}` }
-              }
+              /* the plate takes the true shape of the scan, so nothing crops */
+              style={{ aspectRatio: `${item.width} / ${item.height}` }}
             >
               <Image
                 src={item.src}
@@ -74,12 +61,9 @@ export default function Archive({
             </figcaption>
           </figure>
         ))}
-
       </div>
 
-      {variant === 'featured' && (
-        <ArchiveStrip locale={locale} onOpen={setOpen} />
-      )}
+      <ArchiveStrip locale={locale} onOpen={setOpen} />
 
       <AnimatePresence>
         {open !== null && (
