@@ -474,13 +474,19 @@ ecosystem catches up:
   10 removed `context.getFilename()`, which the `eslint-plugin-react` bundled
   inside `eslint-config-next` still calls.
 
+Both are also listed under `ignore` in
+[`.github/dependabot.yml`](.github/dependabot.yml). Without that, Dependabot
+reopens the same red pull request every Monday — it has already proposed both
+once, and both failed the lint stage exactly as described.
+
 To re-check either:
 
 ```bash
 npm i -D typescript@latest eslint@latest && npm run lint
 ```
 
-If it passes, the pin can go.
+If it passes, drop the matching `ignore` entry and let the upgrade come through
+on its own.
 
 ## Contributing
 
