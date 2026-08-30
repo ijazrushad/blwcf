@@ -192,14 +192,19 @@ function Lightbox({
             exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.99 }}
             transition={{ duration: 0.4, ease: EASE }}
           >
+            {/*
+             * quality 95 rather than 100: at 100 the encoder stops discarding
+             * anything and the file roughly doubles, which on a soft 1290px
+             * scan buys no visible detail. `priority` would only add a preload
+             * hint for an image the browser is already fetching on demand.
+             */}
             <Image
               src={item.src}
               alt={item.title[locale]}
               width={item.width}
               height={item.height}
               sizes="100vw"
-              quality={100}
-              priority
+              quality={95}
             />
           </motion.div>
         </AnimatePresence>

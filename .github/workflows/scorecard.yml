@@ -1,0 +1,44 @@
+name: OpenSSF Scorecard
+
+# Grades the repository's own supply-chain posture: branch protection, pinned
+# actions, token permissions, dangerous workflow patterns. Public repositories
+# get this for free, and the result is a decent standing check on whether the
+# project has drifted.
+
+on:
+  branch_protection_rule:
+  schedule:
+    - cron: '23 6 * * 2'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      security-events: write
+      id-token: write
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Run analysis
+        uses: ossf/scorecard-action@v2
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          # Publishing the result is what enables the score badge in the README.
+          publish_results: true
+
+      - name: Upload to the Security tab
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: results.sarif

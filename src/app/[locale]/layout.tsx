@@ -12,6 +12,20 @@ import {
 import { locales, type Locale } from '@/content/site';
 import '../globals.css';
 
+/*
+ * Seven families is a lot of preloaded weight for one page, so each one below
+ * asks for the narrowest set that the stylesheets can actually select.
+ *
+ * Two rules govern what stays. A weight is reachable if some rule declares it,
+ * or if `b`/`h1`-`h6` fall back onto it — those ask for 700, and CSS font
+ * matching then picks the nearest weight the family shipped. Weight 500 is
+ * unreachable in Inter Tight and Hind Siliguri (nothing declares it, and 600
+ * is nearer to 700), so it is gone; JetBrains Mono keeps its 500 precisely
+ * because that is what its `<b>` resolves to.
+ *
+ * `preload: false` is for families that only appear well below the fold. They
+ * still load, just without competing for bandwidth with the hero.
+ */
 const instrument = Instrument_Serif({
   weight: ['400'],
   style: ['normal', 'italic'],
@@ -21,13 +35,14 @@ const instrument = Instrument_Serif({
 });
 
 const interTight = Inter_Tight({
-  weight: ['300', '400', '500', '600'],
+  weight: ['300', '400', '600'],
   subsets: ['latin'],
   variable: '--font-inter-tight',
   display: 'swap',
 });
 
 const mono = JetBrains_Mono({
+  /* 500 is what `<b>` inside a mono rule resolves to — it has to stay */
   weight: ['400', '500'],
   subsets: ['latin'],
   variable: '--font-mono',
@@ -37,29 +52,34 @@ const mono = JetBrains_Mono({
 const caveat = Caveat({
   weight: ['500'],
   subsets: ['latin'],
+  /* stays preloaded: the handwritten place-name under the hero plate is
+     above the fold, and this is a single small Latin file */
   variable: '--font-caveat',
   display: 'swap',
 });
 
 const baloo = Baloo_Da_2({
-  weight: ['600', '700', '800'],
+  weight: ['700', '800'],
   subsets: ['bengali', 'latin'],
   variable: '--font-baloo',
   display: 'swap',
 });
 
 const hind = Hind_Siliguri({
-  weight: ['300', '400', '500', '600'],
+  weight: ['300', '400', '600'],
   subsets: ['bengali', 'latin'],
   variable: '--font-hind',
   display: 'swap',
 });
 
 const notoBengali = Noto_Serif_Bengali({
-  weight: ['200', '300', '400'],
+  /* the verse sets 300 and nothing else uses this family */
+  weight: ['300'],
   subsets: ['bengali'],
   variable: '--font-noto-bengali',
   display: 'swap',
+  /* the verse sits near the bottom of the page */
+  preload: false,
 });
 
 const fontVars = [

@@ -1,0 +1,26 @@
+name: Proposal
+description: Suggest a new section, plate, or capability.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is missing
+      description: Describe the gap rather than the solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: material
+    attributes:
+      label: Material this would need
+      description: >
+        New scans, transcriptions, translations, a source to check against —
+        anything that has to exist before the work can start.
