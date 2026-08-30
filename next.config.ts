@@ -79,8 +79,23 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/logo.png',
+        /*
+         * The social card and the seal exist to be fetched by somebody else:
+         * the card is what Facebook, WhatsApp, X, LinkedIn, Slack and Discord
+         * show when the link is pasted, and the seal is the Organization logo
+         * in the structured data. The blanket Cross-Origin-Resource-Policy
+         * above says same-origin, which is right for the rest of the site and
+         * wrong for these two — any platform that renders the image straight
+         * from this origin rather than proxying it would be refused. Scrapers
+         * fetch server-side and ignore CORP, so this only shows up on the
+         * platforms that hotlink, which is exactly the case worth covering.
+         */
+        source: '/:file(social-card.jpg|logo.png)',
         headers: [
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'cross-origin',
+          },
           {
             key: 'Cache-Control',
             value: 'public, max-age=604800, stale-while-revalidate=2592000',
