@@ -38,7 +38,6 @@ src/
       layout.tsx         the root layout — fonts and <html lang>
       page.tsx           every section of the single page
       page.module.css
-      lab/archive/       internal layout comparison, not linked from the site
   components/
     Nav.tsx              header and language toggle
     Motion.tsx           Develop / Rise / Parallax / Stagger primitives

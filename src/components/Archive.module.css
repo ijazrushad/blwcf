@@ -1,10 +1,9 @@
 /* ============================================================
    Archive — F's broken editorial grid.
 
-   Three layout variants share the same asymmetric placement:
-     exact      the mockup as drawn: fixed ratios, cover, crops
-     trueRatio  same placement, heights from the real scan ratios
-     featured   trueRatio plus a strip opening the remaining plates
+   The mockup's asymmetric placement and vertical offsets are kept,
+   but each plate's height comes from the true ratio of the scan
+   rather than a hardcoded one, so no document is ever cropped.
    ============================================================ */
 
 .grid {
@@ -22,24 +21,12 @@
 .im img {
   width: 100%;
   height: 100%;
+  /* the frame already carries the true ratio, so contain never letterboxes */
+  object-fit: contain;
   filter: grayscale(1) contrast(1.16);
   transition:
     transform 0.7s var(--ease-out),
     filter 0.7s;
-}
-
-/* --- exact: the mockup as drawn --- */
-.exact .im img {
-  object-fit: cover;
-}
-
-/*
- * --- trueRatio: the plate takes the shape of the scan ---
- * Same columns and same vertical offsets as the mockup, but the
- * height comes from the intrinsic ratio, so nothing is cropped.
- */
-.trueRatio .im img {
-  object-fit: contain;
 }
 
 @media (hover: hover) {
@@ -96,19 +83,6 @@ html[lang='bn'] .cap {
 }
 .r4 {
   grid-column: 7 / 13;
-}
-
-.exact .r1 .im {
-  aspect-ratio: 4 / 3;
-}
-.exact .r2 .im {
-  aspect-ratio: 1;
-}
-.exact .r3 .im {
-  aspect-ratio: 3 / 4;
-}
-.exact .r4 .im {
-  aspect-ratio: 16 / 10;
 }
 
 @media (max-width: 980px) {
