@@ -1,0 +1,200 @@
+/* ============================================================
+   BLWCF — design tokens and global styles
+   Palette: Bone.  Grain: Medium.
+   Bengali display type needs ~25-30% more line-height than Latin,
+   so type sizing is declared per language throughout.
+   ============================================================ */
+
+:root {
+  /* palette — Bone */
+  --bg: #efe9dc;
+  --bg-2: #e2d9c7;
+  --paper: #f8f4ea;
+  --ink: #17150f;
+  --ink-soft: #575346;
+  --ink-faint: #8b8676;
+  --green: #0e4a33;
+  --green-2: #1a6a49;
+  --green-lt: #9bbfa6;
+  --red: #c8102e;
+  --red-dk: #a50d25;
+  --gold: #b8862b;
+
+  /* grain — Medium */
+  --grain-op: 0.36;
+  --half-op: 0.11;
+  --tex-op: 0.42;
+
+  /* layout */
+  --wrap: 1240px;
+  --pad: 34px;
+  --gutter: 24px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (max-width: 700px) {
+  :root {
+    --pad: 20px;
+    --gutter: 16px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* stop iOS inflating text in landscape */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  position: relative;
+}
+
+html[lang='bn'] body {
+  font-family: var(--font-hind), system-ui, sans-serif;
+}
+
+/* ---- paper fibre grain ---- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+  opacity: var(--grain-op);
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- halftone dot screen ---- */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 91;
+  opacity: var(--half-op);
+  mix-blend-mode: multiply;
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 3.5px 3.5px;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--red);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+
+/* ---- shared layout helpers ---- */
+.wrap {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: 0 var(--pad);
+}
+
+.g12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gutter);
+}
+
+/* the mockup collapses the twelve-column grid to one below 980px */
+@media (max-width: 980px) {
+  .g12 {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+.mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- tape strip used on pasted paper sheets ---- */
+.tape {
+  position: absolute;
+  width: 96px;
+  height: 26px;
+  top: -13px;
+  left: 50%;
+  margin-left: -48px;
+  transform: rotate(-2deg);
+  background: rgba(220, 208, 180, 0.72);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
+  pointer-events: none;
+}
+
+.tape::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.35) 0 2px,
+    transparent 2px 5px
+  );
+}
+
+/* ============================================================
+   Motion: everything below collapses to a plain fade when the
+   visitor asks for reduced motion.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

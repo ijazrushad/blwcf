@@ -1,0 +1,850 @@
+/* ============================================================
+   Faithful port of Mockups/art/f-bilingual.html (Treatment F,
+   the C + E hybrid).
+
+   Grid placements, type sizes, rotations and the 1.5px ink rules
+   are carried over from the mockup as-is. Where the mockup used
+   data-lang, this uses html[lang] instead.
+   ============================================================ */
+
+/* ================= hero ================= */
+.hero {
+  padding: 60px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* permanent Bengali watermark — present in BOTH languages */
+.watermarkHolder {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.watermark {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 800;
+  font-size: clamp(220px, 40vw, 620px);
+  line-height: 1.05;
+  color: var(--green);
+  opacity: 0.1;
+  white-space: nowrap;
+}
+
+.heroWrap {
+  position: relative;
+  z-index: 3;
+}
+
+.motto {
+  grid-column: 1 / 4;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--red);
+  line-height: 1.95;
+  border-top: 1.5px solid var(--ink);
+  padding-top: 12px;
+}
+
+html[lang='bn'] .motto {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.75;
+}
+
+/* masked hero word — photograph shows through the letterforms */
+.masked {
+  grid-column: 4 / 13;
+  background-image: url('/archive/photo-report.jpg');
+  background-size: cover;
+  background-position: center 26%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: contrast(1.3) grayscale(1) brightness(0.8);
+  overflow: visible;
+}
+
+/* Bengali needs room above for the matra and below for descenders,
+   otherwise background-clip:text crops the glyphs. */
+.maskedBn {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 800;
+  font-size: clamp(58px, 13.2vw, 190px);
+  line-height: 1.22;
+  padding: 0.06em 0 0.14em;
+}
+
+.maskedEn {
+  font-family: var(--font-instrument), serif;
+  font-weight: 400;
+  font-size: clamp(58px, 13.4vw, 196px);
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  line-height: 0.92;
+  padding: 0.04em 0 0.08em;
+}
+
+.htitle {
+  grid-column: 4 / 13;
+  margin-top: 14px;
+}
+
+.h1 {
+  font-size: clamp(26px, 3.5vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -0.028em;
+  font-family: var(--font-instrument), serif;
+  font-weight: 400;
+}
+
+html[lang='bn'] .h1 {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.24;
+}
+
+.h1 i {
+  font-style: italic;
+  color: var(--green);
+}
+
+/* the one screenprint element: misregistered cut numeral */
+.n {
+  position: relative;
+  display: inline-block;
+  font-style: normal;
+  color: var(--paper);
+  background: var(--red);
+  padding: 0 13px 3px;
+  transform: rotate(-2deg);
+  clip-path: polygon(2% 5%, 99% 0, 100% 95%, 1% 100%);
+  box-shadow: 4px 5px 0 var(--ink);
+  line-height: 1.16;
+}
+
+html[lang='bn'] .n {
+  padding: 0.02em 14px 0.12em;
+  line-height: 1.34;
+}
+
+.hmeta {
+  grid-column: 4 / 8;
+  margin-top: 28px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  line-height: 2.2;
+  border-top: 1.5px solid var(--ink);
+  padding-top: 12px;
+}
+
+html[lang='bn'] .hmeta {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14.5px;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 2;
+}
+
+.hmeta b {
+  color: var(--ink);
+}
+
+.hsub {
+  grid-column: 8 / 13;
+  margin-top: 28px;
+  font-size: 16.5px;
+  line-height: 1.82;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .hsub {
+  font-size: 17px;
+  line-height: 1.95;
+}
+
+/* hero photo bleeding left + pasted note */
+.bleedL {
+  margin-top: 66px;
+  position: relative;
+  height: 66vh;
+  min-height: 420px;
+}
+
+.bleedLim {
+  position: absolute;
+  left: calc(50% - 50vw);
+  width: 74vw;
+  height: 100%;
+  overflow: hidden;
+  background: var(--green);
+}
+
+.bleedLim img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.2);
+}
+
+.note {
+  position: absolute;
+  right: 0;
+  bottom: 40px;
+  width: 310px;
+  background: var(--paper);
+  padding: 24px 22px 26px;
+  transform: rotate(-1.2deg);
+  box-shadow: 0 16px 38px rgba(20, 18, 10, 0.24);
+  z-index: 2;
+}
+
+.note :global(.tape) {
+  top: -13px;
+  left: 50%;
+  margin-left: -48px;
+  transform: rotate(-2.4deg);
+}
+
+.noteKick {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+html[lang='bn'] .noteKick {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.note p {
+  margin-top: 9px;
+  font-size: 14.5px;
+  line-height: 1.72;
+}
+
+html[lang='bn'] .note p {
+  font-size: 15.5px;
+  line-height: 1.9;
+}
+
+.noteHand {
+  font-family: var(--font-caveat), cursive;
+  font-size: 17px;
+  color: var(--ink-soft);
+  margin-top: 10px;
+}
+
+html[lang='bn'] .noteHand {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+}
+
+/* ================= dates ================= */
+.dates {
+  background: var(--green);
+  color: var(--paper);
+  padding: 32px 0 38px;
+  margin-top: 76px;
+}
+
+.datesInner {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.dt b {
+  display: block;
+  font-family: var(--font-instrument), serif;
+  font-size: 29px;
+  font-weight: 400;
+}
+
+html[lang='bn'] .dt b {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+}
+
+.dt span {
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green-lt);
+}
+
+html[lang='bn'] .dt span {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* ================= sections ================= */
+.section {
+  padding: 106px 0;
+}
+
+/* ================= figures ================= */
+.figGrid {
+  align-items: end;
+}
+
+.fig b {
+  display: block;
+  font-family: var(--font-instrument), serif;
+  font-size: clamp(84px, 14vw, 216px);
+  line-height: 0.76;
+  letter-spacing: -0.05em;
+}
+
+html[lang='bn'] .fig b {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.86;
+}
+
+.lb {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-top: 1.5px solid var(--ink);
+  padding-top: 10px;
+  margin-top: 14px;
+}
+
+html[lang='bn'] .lb {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.f1 {
+  grid-column: 1 / 5;
+  color: var(--red);
+}
+
+.f2 {
+  grid-column: 6 / 9;
+  color: var(--green);
+  padding-bottom: 32px;
+}
+
+.f3 {
+  grid-column: 10 / 13;
+}
+
+.f3 b {
+  font-size: clamp(54px, 7.6vw, 116px);
+}
+
+.figtxt {
+  grid-column: 5 / 10;
+  font-size: 15.5px;
+  line-height: 1.84;
+  color: var(--ink-soft);
+  padding-bottom: 16px;
+}
+
+html[lang='bn'] .figtxt {
+  font-size: 16.5px;
+  line-height: 2;
+}
+
+/* ================= section heads =================
+   Bengali script stays as a permanent mark on every section. */
+.sh {
+  margin-bottom: 56px;
+}
+
+.shGrid {
+  align-items: baseline;
+}
+
+.shN {
+  grid-column: 1 / 2;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--red);
+}
+
+.shH {
+  grid-column: 2 / 9;
+}
+
+.kick {
+  font-family: var(--font-caveat), cursive;
+  font-size: 20px;
+  color: var(--red);
+  display: block;
+  transform: rotate(-1deg);
+  margin-bottom: 2px;
+}
+
+html[lang='bn'] .kick {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 15px;
+  transform: none;
+}
+
+.shH h2 {
+  font-family: var(--font-instrument), serif;
+  font-weight: 400;
+  font-size: clamp(34px, 5.2vw, 74px);
+  line-height: 0.95;
+  letter-spacing: -0.032em;
+}
+
+html[lang='bn'] .shH h2 {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+}
+
+.shH h2 i {
+  font-style: italic;
+  color: var(--green);
+}
+
+/* permanent Bengali mark, right column, shown in BOTH languages */
+.mark {
+  grid-column: 10 / 13;
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  color: var(--green);
+  opacity: 0.62;
+  text-align: right;
+  line-height: 1.2;
+}
+
+html[lang='bn'] .mark {
+  font-family: var(--font-mono), monospace;
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 1;
+}
+
+/* ================= courses ================= */
+.cse {
+  margin-bottom: 100px;
+}
+
+.sheet {
+  background: var(--paper);
+  padding: 26px 24px 30px;
+  position: relative;
+  box-shadow: 0 18px 44px rgba(20, 18, 10, 0.18);
+}
+
+.sheet :global(.tape) {
+  top: -13px;
+  left: 50%;
+  margin-left: -48px;
+  transform: rotate(-2deg);
+}
+
+.cseIm {
+  overflow: hidden;
+  background: var(--green);
+}
+
+.cseIm img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.17);
+  transition: filter 0.7s;
+}
+
+@media (hover: hover) {
+  .cse:hover .cseIm img {
+    filter: grayscale(0.18) contrast(1.06);
+  }
+}
+
+.yr {
+  font-family: var(--font-instrument), serif;
+  font-size: clamp(44px, 6.4vw, 96px);
+  line-height: 0.84;
+  letter-spacing: -0.04em;
+  color: var(--red);
+}
+
+html[lang='bn'] .yr {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 800;
+  line-height: 0.96;
+}
+
+.sheet h3 {
+  font-family: var(--font-instrument), serif;
+  font-weight: 400;
+  font-size: 32px;
+  letter-spacing: -0.024em;
+  margin-top: 6px;
+}
+
+html[lang='bn'] .sheet h3 {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+  font-size: 29px;
+  line-height: 1.3;
+}
+
+.dt2 {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-top: 10px;
+}
+
+html[lang='bn'] .dt2 {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.sheet p {
+  margin-top: 18px;
+  font-size: 15px;
+  line-height: 1.82;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .sheet p {
+  font-size: 16px;
+  line-height: 2;
+}
+
+.hand {
+  font-family: var(--font-caveat), cursive;
+  font-size: 18px;
+  color: var(--ink-soft);
+  margin-top: 12px;
+}
+
+html[lang='bn'] .hand {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 15px;
+}
+
+.med {
+  margin-top: 22px;
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  border-top: 1.5px solid var(--ink);
+  padding-top: 14px;
+}
+
+.med div b {
+  display: block;
+  font-family: var(--font-instrument), serif;
+  font-size: 26px;
+  color: var(--green);
+  line-height: 1;
+}
+
+html[lang='bn'] .med div b {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+}
+
+.med div span {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .med div span {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.c1 .cseIm {
+  grid-column: 1 / 8;
+  aspect-ratio: 16 / 10;
+  transform: rotate(-0.8deg);
+}
+
+.c1 .tx {
+  grid-column: 9 / 13;
+}
+
+.c2 .tx {
+  grid-column: 1 / 5;
+  padding-top: 66px;
+}
+
+.c2 .cseIm {
+  grid-column: 6 / 13;
+  aspect-ratio: 16 / 10;
+  transform: rotate(0.7deg);
+}
+
+/* ================= verse ================= */
+.verse {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 130px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.bgim {
+  position: absolute;
+  inset: 0;
+}
+
+.bgimInner {
+  position: absolute;
+  inset: -14% 0;
+}
+
+.bgim img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.17;
+  filter: grayscale(1) contrast(1.3);
+}
+
+.verseWrap {
+  position: relative;
+  z-index: 3;
+}
+
+/* Noto Serif Bengali ships no italic file — the slant is synthesised, so keep
+   font-synthesis on explicitly in case a reset ever turns it off. */
+.bnq {
+  font-family: var(--font-noto-bengali), serif;
+  font-weight: 300;
+  font-style: italic;
+  font-synthesis: style;
+  color: #cfc7b4;
+  font-size: clamp(20px, 3.4vw, 44px);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  max-width: 32ch;
+}
+
+.tr {
+  margin-top: 30px;
+  font-size: 15.5px;
+  line-height: 1.82;
+  color: #a8a497;
+  max-width: 46ch;
+  font-style: italic;
+}
+
+html[lang='bn'] .tr {
+  font-family: var(--font-hind), sans-serif;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 2;
+}
+
+.by {
+  display: block;
+  margin-top: 22px;
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--gold);
+  font-style: normal;
+}
+
+/* ================= footer ================= */
+.footer {
+  padding: 72px 0 34px;
+  border-top: 1.5px solid var(--ink);
+}
+
+.fGrid {
+  row-gap: 30px;
+}
+
+.fa {
+  grid-column: 1 / 5;
+}
+.fb2 {
+  grid-column: 6 / 8;
+}
+.fc {
+  grid-column: 9 / 11;
+}
+.fd {
+  grid-column: 11 / 13;
+}
+
+.footer h5 {
+  font-family: var(--font-instrument), serif;
+  font-size: 20px;
+  margin-bottom: 12px;
+  font-weight: 400;
+}
+
+html[lang='bn'] .footer h5 {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+.footer p {
+  font-size: 14px;
+  line-height: 1.82;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .footer p {
+  font-size: 15px;
+  line-height: 2;
+}
+
+.footer a {
+  display: block;
+  text-decoration: none;
+  padding: 5px 0;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .footer a {
+  font-size: 15px;
+}
+
+@media (hover: hover) {
+  .footer a:hover {
+    color: var(--red);
+  }
+}
+
+.fbar {
+  margin-top: 52px;
+  padding-top: 18px;
+  border-top: 1.5px solid var(--ink);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ================= responsive =================
+   Single column below 980px, matching the mockup. */
+@media (max-width: 980px) {
+  .motto,
+  .masked,
+  .htitle,
+  .hsub,
+  .hmeta,
+  .f1,
+  .f2,
+  .f3,
+  .figtxt,
+  .shN,
+  .shH,
+  .mark,
+  .c1 .cseIm,
+  .c1 .tx,
+  .c2 .cseIm,
+  .c2 .tx,
+  .fa,
+  .fb2,
+  .fc,
+  .fd {
+    grid-column: 1 / -1;
+  }
+
+  .c2 .tx {
+    padding-top: 0;
+  }
+
+  .mark {
+    text-align: left;
+  }
+
+  .bleedL {
+    height: auto;
+  }
+
+  .bleedLim {
+    position: relative;
+    left: 0;
+    width: 100%;
+    height: 300px;
+  }
+
+  .note {
+    position: relative;
+    width: 100%;
+    bottom: 0;
+    margin-top: -40px;
+    transform: none;
+  }
+
+  /* the mirrored second course would otherwise read out of order */
+  .c2 .cseIm {
+    order: 2;
+  }
+  .c2 .tx {
+    order: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 72px 0;
+  }
+  .cse {
+    margin-bottom: 68px;
+  }
+  .verse {
+    padding: 84px 0;
+  }
+  .fbar {
+    font-size: 9px;
+  }
+}

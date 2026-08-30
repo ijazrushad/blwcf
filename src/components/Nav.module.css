@@ -1,0 +1,111 @@
+/* Ported from Treatment F: sticky bar, 80px tall, with the language
+   toggle as a rotated red screenprint block. */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 120;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 80px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: auto;
+  text-decoration: none;
+}
+
+.brand img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+
+.bt {
+  font-family: var(--font-instrument), serif;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+html[lang='bn'] .bt {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+  font-size: 21px;
+}
+
+.brand span.sub {
+  display: block;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 5px;
+}
+
+html[lang='bn'] .brand span.sub {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.link {
+  text-decoration: none;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+html[lang='bn'] .link {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14.5px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (hover: hover) {
+  .link:hover {
+    color: var(--red);
+  }
+}
+
+/* the screenprint block, matching the cut numeral in the headline */
+.langbtn {
+  background: var(--red);
+  color: var(--paper);
+  padding: 8px 16px;
+  transform: rotate(-1.3deg);
+  box-shadow: 2px 3px 0 var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+html[lang='bn'] .langbtn {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 980px) {
+  .link {
+    display: none;
+  }
+}

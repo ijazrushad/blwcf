@@ -1,0 +1,266 @@
+/* ============================================================
+   Archive — F's broken editorial grid.
+
+   The mockup's asymmetric placement and vertical offsets are kept,
+   but each plate's height comes from the true ratio of the scan
+   rather than a hardcoded one, so no document is ever cropped.
+   ============================================================ */
+
+.grid {
+  row-gap: 26px;
+}
+
+.im {
+  overflow: hidden;
+  background: var(--green);
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.im img {
+  width: 100%;
+  height: 100%;
+  /* the frame already carries the true ratio, so contain never letterboxes */
+  object-fit: contain;
+  filter: grayscale(1) contrast(1.16);
+  transition:
+    transform 0.7s var(--ease-out),
+    filter 0.7s;
+}
+
+@media (hover: hover) {
+  .plate:hover .im img {
+    transform: scale(1.04);
+    filter: grayscale(0.18) contrast(1.06);
+  }
+}
+
+.plate:focus-visible .im img {
+  transform: scale(1.04);
+  filter: grayscale(0.18) contrast(1.06);
+}
+
+.plate {
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+figure.plate {
+  margin: 0;
+}
+
+.cap {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding-top: 11px;
+  border-top: 1.5px solid var(--ink);
+  margin-top: 11px;
+}
+
+html[lang='bn'] .cap {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* --- the broken grid placements, straight from the mockup --- */
+.r1 {
+  grid-column: 1 / 7;
+}
+.r2 {
+  grid-column: 8 / 13;
+  padding-top: 60px;
+}
+.r3 {
+  grid-column: 2 / 6;
+}
+.r4 {
+  grid-column: 7 / 13;
+}
+
+@media (max-width: 980px) {
+  .r1,
+  .r2,
+  .r3,
+  .r4 {
+    grid-column: 1 / -1;
+  }
+
+  .r2 {
+    padding-top: 0;
+  }
+}
+
+/* ============================================================
+   Lightbox
+   ============================================================ */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(9, 9, 7, 0.94);
+  display: flex;
+  flex-direction: column;
+  padding: max(14px, env(safe-area-inset-top)) 14px
+    max(14px, env(safe-area-inset-bottom));
+}
+
+.lbBar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #ded8c8;
+  flex: 0 0 auto;
+  padding: 4px 4px 12px;
+}
+
+.lbTitle {
+  min-width: 0;
+}
+
+.lbTitle b {
+  display: block;
+  font-family: var(--font-instrument), serif;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.2;
+  color: #f2ece0;
+}
+
+html[lang='bn'] .lbTitle b {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.lbTitle span {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8e8a7b;
+}
+
+html[lang='bn'] .lbTitle span {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 12.5px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.lbTools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.lbBtn {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ded8c8;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+
+.lbBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.lbBtn.active {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+
+.lbStage {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lbImgWrap {
+  position: relative;
+  margin: auto;
+  transition: width 0.45s var(--ease-out);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.lbImgWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: auto;
+  background: #14140f;
+  pointer-events: none;
+}
+
+.lbCount {
+  flex: 0 0 auto;
+  text-align: center;
+  padding-top: 10px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: #7d7a6c;
+}
+
+.lbNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.42);
+  color: #e6e0d0;
+  z-index: 4;
+}
+
+.lbNav:hover {
+  background: var(--red);
+}
+
+.lbPrev {
+  left: 0;
+}
+.lbNext {
+  right: 0;
+}
+
+@media (max-width: 700px) {
+  .lbTitle b {
+    font-size: 15px;
+  }
+  .lbNav {
+    width: 38px;
+    height: 56px;
+  }
+  .lbBtn {
+    width: 36px;
+    height: 36px;
+  }
+}

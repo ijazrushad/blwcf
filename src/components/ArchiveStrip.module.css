@@ -1,0 +1,250 @@
+/* ============================================================
+   Archive contact-sheet reel — "coming into register"
+
+   Every visual below is driven by one custom property, --f, which
+   the component sets each frame: 0 when a plate is far from the
+   press line at the centre, 1 when it is sitting on it.
+
+     --f = 0   inks pulled apart, soft, grey, tilted, sunk
+     --f = 1   in register, sharp, toned, square, lifted
+
+   Defaulting --f to 1 means the strip renders correctly before
+   JavaScript takes over, and stays correct if it never does.
+   ============================================================ */
+
+.strip {
+  margin-top: 46px;
+}
+
+.stripHead {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 18px;
+  border-top: 1.5px solid var(--ink);
+  margin-bottom: 30px;
+}
+
+.stripLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+html[lang='bn'] .stripLabel {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.stripHint {
+  font-family: var(--font-caveat), cursive;
+  font-size: 18px;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .stripHint {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 13.5px;
+}
+
+/*
+ * The viewport breaks out of .wrap to span the window, so the reel reads as
+ * a roll passing through the page rather than a boxed carousel.
+ */
+.viewport {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+  cursor: grab;
+  padding: 26px 0 34px;
+  /* let vertical page scrolling through the strip still work on touch */
+  touch-action: pan-y;
+}
+
+.viewport:active {
+  cursor: grabbing;
+}
+
+/* the reel fades out at both edges instead of stopping at a hard line */
+.viewport::before,
+.viewport::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 110px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.viewport::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--bg) 12%, transparent);
+}
+
+.viewport::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--bg) 12%, transparent);
+}
+
+@media (max-width: 700px) {
+  .viewport::before,
+  .viewport::after {
+    width: 44px;
+  }
+}
+
+/* reduced-motion fallback scrolls by hand */
+.rail {
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  cursor: default;
+  touch-action: auto;
+}
+
+.rail .slide {
+  scroll-snap-align: center;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: max-content;
+  padding: 0 26px;
+  will-change: transform;
+}
+
+/* ============================================================
+   A single plate
+   ============================================================ */
+.slide {
+  --f: 1;
+  /* how far the two inks are pulled apart, and how far the plate has sunk */
+  --off: calc((1 - var(--f)) * 7px);
+
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  /* uniform height; width comes from the inline aspect-ratio */
+  height: 300px;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+
+  transform: translateY(calc((1 - var(--f)) * 14px))
+    rotate(calc((1 - var(--f)) * -1.1deg))
+    scale(calc(0.9 + 0.1 * var(--f)));
+}
+
+@media (max-width: 900px) {
+  .slide {
+    height: 220px;
+  }
+  .track {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 560px) {
+  .slide {
+    height: 165px;
+  }
+}
+
+/*
+ * The sheet carries the misregistration: a red plate and a green plate
+ * offset in opposite directions behind the photograph, converging to nothing
+ * as the slide reaches the press line.
+ */
+.sheet {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  background: var(--green);
+  box-shadow:
+    calc(var(--off) * -1) 0 0 var(--red),
+    var(--off) 0 0 var(--green-2);
+}
+
+.sheet img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+  /* out of register the photograph is flat and grey; on the line it tones */
+  filter: grayscale(calc(1 - 0.88 * var(--f)))
+    contrast(calc(1.16 - 0.11 * var(--f)))
+    sepia(calc(0.09 * var(--f)))
+    blur(calc((1 - var(--f)) * 1.6px));
+}
+
+/* a paper shadow that deepens as the plate lifts into register */
+.slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  box-shadow: 0 calc(6px + 16px * var(--f)) calc(14px + 26px * var(--f))
+    rgba(20, 18, 10, calc(0.1 + 0.22 * var(--f)));
+  pointer-events: none;
+}
+
+.slide:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+}
+
+/* the plate number, printed in the corner like a contact sheet */
+.slideNo {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--paper);
+  background: rgba(18, 18, 13, 0.7);
+  padding: 3px 6px;
+  opacity: calc(0.35 + 0.65 * var(--f));
+}
+
+/* the caption rises as the plate comes into register */
+.slideCap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 24px 10px 9px;
+  text-align: left;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: linear-gradient(transparent, rgba(12, 12, 8, 0.88));
+  transform: translateY(calc((1 - var(--f)) * 100%));
+  opacity: var(--f);
+}
+
+html[lang='bn'] .slideCap {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 12.5px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* the rail fallback has no press line, so every plate sits in register */
+.rail .slide {
+  --f: 1;
+}
