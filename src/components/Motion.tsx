@@ -24,31 +24,57 @@ export function Develop({
   children,
   delay = 0,
   className,
+  eager = false,
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
+  /**
+   * For content already in the first viewport. Runs on mount rather than on
+   * scroll, and holds opacity at 1 throughout — an element that starts fully
+   * transparent has not painted, so if it is the Largest Contentful Paint
+   * candidate the browser does not record LCP until the fade finishes. The
+   * blur and contrast still resolve, which is where the effect actually lives.
+   */
+  eager?: boolean;
 }) {
   const reduce = useReducedMotion();
+
+  /*
+   * Matches the mockup's .dev reveal: opacity and blur only, no scale.
+   * Animating scale would write to `transform` and wipe out the static
+   * rotations F puts on the pasted cards and course plates.
+   */
+  const hidden = reduce
+    ? { opacity: eager ? 1 : 0 }
+    : { opacity: eager ? 1 : 0, filter: 'blur(9px) contrast(2)' };
+
+  const shown = reduce
+    ? { opacity: 1 }
+    : { opacity: 1, filter: 'blur(0px) contrast(1)' };
+
+  const transition = { duration: reduce ? 0.4 : 1.15, delay, ease: EASE };
+
+  if (eager) {
+    return (
+      <motion.div
+        className={className}
+        initial={hidden}
+        animate={shown}
+        transition={transition}
+      >
+        {children}
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
       className={className}
-      /*
-       * Matches the mockup's .dev reveal: opacity and blur only, no scale.
-       * Animating scale would write to `transform` and wipe out the static
-       * rotations F puts on the pasted cards and course plates.
-       */
-      initial={
-        reduce
-          ? { opacity: 0 }
-          : { opacity: 0, filter: 'blur(9px) contrast(2)' }
-      }
-      whileInView={
-        reduce ? { opacity: 1 } : { opacity: 1, filter: 'blur(0px) contrast(1)' }
-      }
+      initial={hidden}
+      whileInView={shown}
       viewport={{ once: true, amount: 0.18 }}
-      transition={{ duration: reduce ? 0.4 : 1.15, delay, ease: EASE }}
+      transition={transition}
     >
       {children}
     </motion.div>
@@ -106,7 +132,11 @@ export function Parallax({
   const y = useTransform(scrollYProgress, [0, 1], [distance, -distance]);
 
   return (
-    <motion.div ref={ref} className={className} style={reduce ? undefined : { y }}>
+    <motion.div
+      ref={ref}
+      className={className}
+      style={reduce ? undefined : { y }}
+    >
       {children}
     </motion.div>
   );

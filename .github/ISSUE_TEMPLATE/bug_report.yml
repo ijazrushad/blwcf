@@ -1,0 +1,59 @@
+name: Bug report
+description: Something on the site is broken or renders wrongly.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not report security vulnerabilities here — open a private
+        [security advisory](https://github.com/ijazrushad/blwcf/security/advisories/new) instead.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce it
+      placeholder: |
+        1. Open /bn
+        2. Scroll to the archive reel
+        3. Drag it to the left
+    validations:
+      required: true
+
+  - type: dropdown
+    id: locale
+    attributes:
+      label: Which language
+      options:
+        - English (/en)
+        - বাংলা (/bn)
+        - Both
+    validations:
+      required: true
+
+  - type: input
+    id: env
+    attributes:
+      label: Browser, OS and screen width
+      placeholder: Chrome 141, Android 15, 412px
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: motion
+    attributes:
+      label: Motion setting
+      options:
+        - label: I have "reduce motion" turned on at the system level
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshot or console output

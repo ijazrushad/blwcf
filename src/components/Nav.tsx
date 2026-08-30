@@ -10,7 +10,17 @@ export default function Nav({ locale }: { locale: Locale }) {
     <nav className={s.nav}>
       <div className={`wrap ${s.inner}`}>
         <Link href={`/${locale}`} className={s.brand}>
-          <Image src="/logo.png" alt="" width={500} height={500} priority />
+          {/* the seal is a 500px source rendered at 52px — without `sizes`
+              next/image would ship a 640px variant of it on every load */}
+          <Image
+            src="/logo.png"
+            alt=""
+            width={500}
+            height={500}
+            sizes="52px"
+            quality={88}
+            priority
+          />
           <span>
             <span className={s.bt}>{brand.short[locale]}</span>
             <span className={s.sub}>{brand.tagline[locale]}</span>

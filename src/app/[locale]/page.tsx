@@ -54,7 +54,8 @@ export default async function Page({
 
             <div className={s.htitle}>
               <h1 className={s.h1}>
-                {hero.titleBefore[l]} <span className={s.n}>{hero.titleNumber[l]}</span>{' '}
+                {hero.titleBefore[l]}{' '}
+                <span className={s.n}>{hero.titleNumber[l]}</span>{' '}
                 <i>{hero.titleAfter[l]}</i>
               </h1>
             </div>
@@ -72,13 +73,14 @@ export default async function Page({
           </div>
 
           <div className={s.bleedL}>
-            <Develop className={s.bleedLim}>
+            <Develop className={s.bleedLim} eager>
               <Image
                 src={bleed.src}
                 alt={hero.plate.body[l]}
                 width={bleed.width}
                 height={bleed.height}
-                sizes="80vw"
+                /* .bleedLim is 74vw above the 980px breakpoint, full width below */
+                sizes="(max-width: 980px) 100vw, 74vw"
                 quality={95}
                 priority
               />

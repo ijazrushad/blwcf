@@ -85,16 +85,62 @@ function Reel({
   const paused = useRef(false);
   const drag = useRef({ active: false, lastX: 0, moved: 0 });
 
+  /*
+   * Layout geometry, sampled only when the layout actually changes. The frame
+   * loop below used to call getBoundingClientRect() once per plate — twenty-two
+   * forced synchronous layouts every frame, which is what made the reel stutter
+   * on slower machines. The plates sit in a static flex row, so their centres
+   * are fixed relative to the track and the only thing moving is the track's
+   * own transform. That makes the per-frame work pure arithmetic.
+   */
+  const geometry = useRef({ centres: [] as number[], line: 0, reach: 0 });
+  /* last value written per plate, so unchanged plates cost no style recalc */
+  const written = useRef<number[]>([]);
+
   /* the track holds the plates twice; one set's width is the wrap distance */
   useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
+    const track = trackRef.current;
+    const viewport = viewportRef.current;
+    if (!track || !viewport) return;
 
-    const measure = () => setHalf(el.scrollWidth / 2);
+    const measure = () => {
+      setHalf(track.scrollWidth / 2);
+
+      const vp = viewport.getBoundingClientRect();
+      /*
+       * Measuring against the track's own rect rather than the viewport's is
+       * what makes this translation-independent: whatever the track is
+       * currently translated by is in both rects and cancels, so these centres
+       * describe the untranslated row. The frame loop then adds the live
+       * translation back. The track is a static, full-width child of .viewport
+       * and .viewport has no horizontal padding, so an untranslated track
+       * starts exactly at the viewport's left edge — which is what lets the
+       * two be compared against `line` below.
+       */
+      const tr = track.getBoundingClientRect();
+
+      geometry.current = {
+        /*
+         * A plate's rect is scaled and rotated, but both transforms are about
+         * its own centre, so the centre this reads is the untransformed one.
+         */
+        centres: slideRefs.current.map((el) => {
+          if (!el) return 0;
+          const r = el.getBoundingClientRect();
+          return r.left + r.width / 2 - tr.left;
+        }),
+        /* the press line, in those same track-relative coordinates */
+        line: vp.width / 2,
+        // how far a plate can be from the line before it is fully out of register
+        reach: Math.max(vp.width * 0.34, 220),
+      };
+      written.current = [];
+    };
     measure();
 
     const ro = new ResizeObserver(measure);
-    ro.observe(el);
+    ro.observe(track);
+    ro.observe(viewport);
     return () => ro.disconnect();
   }, []);
 
@@ -103,40 +149,30 @@ function Reel({
   );
 
   useAnimationFrame((_, delta) => {
-    if (half && !paused.current && !drag.current.active) {
+    const { centres, line, reach } = geometry.current;
+    if (!half || !reach) return;
+
+    if (!paused.current && !drag.current.active) {
       baseX.set(baseX.get() - SPEED * (delta / 1000));
     }
 
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-
-    /*
-     * Drive each plate's registration from how close it is to the press line.
-     * All reads happen before all writes so the browser only lays out once.
-     */
-    const box = viewport.getBoundingClientRect();
-    const centre = box.left + box.width / 2;
-    // how far a plate can be from the line before it is fully out of register
-    const reach = Math.max(box.width * 0.34, 220);
+    /* the same wrap the visual transform uses, so the two never disagree */
+    const trackX = wrapValue(-half, 0, baseX.get());
 
     const slides = slideRefs.current;
-    const focus: number[] = [];
-
     for (let i = 0; i < slides.length; i++) {
       const el = slides[i];
-      if (!el) {
-        focus.push(0);
-        continue;
-      }
-      const r = el.getBoundingClientRect();
-      const d = Math.abs(r.left + r.width / 2 - centre);
+      if (!el) continue;
+
+      const d = Math.abs(centres[i] + trackX - line);
       const t = Math.max(0, 1 - d / reach);
       // ease the falloff so the plate snaps into register near the line
-      focus.push(t * t * (3 - 2 * t));
-    }
+      const f = t * t * (3 - 2 * t);
 
-    for (let i = 0; i < slides.length; i++) {
-      slides[i]?.style.setProperty('--f', focus[i].toFixed(3));
+      /* below the rounding of --f, writing again only costs a recalc */
+      if (Math.abs((written.current[i] ?? -1) - f) < 0.002) continue;
+      written.current[i] = f;
+      el.style.setProperty('--f', f.toFixed(3));
     }
   });
 
@@ -173,10 +209,13 @@ function Reel({
   }, [baseX]);
 
   /* a drag that travelled should not also open the lightbox */
-  const handleSelect = useCallback((index: number) => {
-    if (drag.current.moved > 6) return;
-    onOpen(index);
-  }, [onOpen]);
+  const handleSelect = useCallback(
+    (index: number) => {
+      if (drag.current.moved > 6) return;
+      onOpen(index);
+    },
+    [onOpen]
+  );
 
   const total = archive.length;
 

@@ -56,9 +56,18 @@ export const hero = {
     bn: 'যুদ্ধক্ষেত্র থেকে বেছে নেওয়া ৬১ জন গেরিলা মুক্তিযোদ্ধা ক্যাডেট, উত্তরের ডুয়ার্সের পাহাড়ি জঙ্গলে পাঠানো হয়েছিল। কোনো ব্যান্ড ছিল না, কুচকাওয়াজ ছিল না। শুধু খাকি পোশাক, জঙ্গল বুট আর একটি সনদপত্র।',
   },
   meta: [
-    { k: { en: 'Murti', bn: 'মুর্তি' }, v: { en: 'Jalpaiguri, West Bengal', bn: 'জলপাইগুড়ি, পশ্চিমবঙ্গ' } },
-    { k: { en: '09.10.1971', bn: '৯ অক্টোবর ১৯৭১' }, v: { en: 'Commissioning', bn: 'কমিশন লাভ' } },
-    { k: { en: '12 weeks', bn: '১২ সপ্তাহ' }, v: { en: 'Provisional academy', bn: 'অস্থায়ী সামরিক একাডেমি' } },
+    {
+      k: { en: 'Murti', bn: 'মুর্তি' },
+      v: { en: 'Jalpaiguri, West Bengal', bn: 'জলপাইগুড়ি, পশ্চিমবঙ্গ' },
+    },
+    {
+      k: { en: '09.10.1971', bn: '৯ অক্টোবর ১৯৭১' },
+      v: { en: 'Commissioning', bn: 'কমিশন লাভ' },
+    },
+    {
+      k: { en: '12 weeks', bn: '১২ সপ্তাহ' },
+      v: { en: 'Provisional academy', bn: 'অস্থায়ী সামরিক একাডেমি' },
+    },
   ],
   plate: {
     label: { en: 'Plate 01 — 9 October 1971', bn: 'চিত্র ০১ — ৯ অক্টোবর ১৯৭১' },
@@ -71,16 +80,37 @@ export const hero = {
 };
 
 export const dates: { d: Bi; n: Bi }[] = [
-  { d: { en: '26 March', bn: '২৬ মার্চ' }, n: { en: 'Independence Day', bn: 'স্বাধীনতা দিবস' } },
-  { d: { en: '05 August', bn: '৫ আগস্ট' }, n: { en: 'Fellowship Day', bn: 'ফেলোশিপ দিবস' } },
-  { d: { en: '09 October', bn: '৯ অক্টোবর' }, n: { en: 'Foundation Day', bn: 'প্রতিষ্ঠা দিবস' } },
-  { d: { en: '16 December', bn: '১৬ ডিসেম্বর' }, n: { en: 'Victory Day', bn: 'বিজয় দিবস' } },
+  {
+    d: { en: '26 March', bn: '২৬ মার্চ' },
+    n: { en: 'Independence Day', bn: 'স্বাধীনতা দিবস' },
+  },
+  {
+    d: { en: '05 August', bn: '৫ আগস্ট' },
+    n: { en: 'Fellowship Day', bn: 'ফেলোশিপ দিবস' },
+  },
+  {
+    d: { en: '09 October', bn: '৯ অক্টোবর' },
+    n: { en: 'Foundation Day', bn: 'প্রতিষ্ঠা দিবস' },
+  },
+  {
+    d: { en: '16 December', bn: '১৬ ডিসেম্বর' },
+    n: { en: 'Victory Day', bn: 'বিজয় দিবস' },
+  },
 ];
 
 export const figures = {
-  a: { n: { en: '61', bn: '৬১' }, l: { en: 'Cadets commissioned 1971', bn: 'ক্যাডেট · কমিশন ১৯৭১' } },
-  b: { n: { en: '46', bn: '৪৬' }, l: { en: 'Cadets commissioned 1972', bn: 'ক্যাডেট · কমিশন ১৯৭২' } },
-  c: { n: { en: '28', bn: '২৮' }, l: { en: 'Gallantry awards', bn: 'বীরত্বসূচক খেতাব' } },
+  a: {
+    n: { en: '61', bn: '৬১' },
+    l: { en: 'Cadets commissioned 1971', bn: 'ক্যাডেট · কমিশন ১৯৭১' },
+  },
+  b: {
+    n: { en: '46', bn: '৪৬' },
+    l: { en: 'Cadets commissioned 1972', bn: 'ক্যাডেট · কমিশন ১৯৭২' },
+  },
+  c: {
+    n: { en: '28', bn: '২৮' },
+    l: { en: 'Gallantry awards', bn: 'বীরত্বসূচক খেতাব' },
+  },
   text: {
     en: 'Originally named Short Service 1, renamed the 1st Bangladesh War Course after 1975. The course produced three martyrs, one Bir Uttom, two Bir Bikrams and seventeen Bir Protiks — and later four Major Generals, two Ambassadors and six PhDs.',
     bn: 'প্রথমে এই কোর্সের নাম ছিল শর্ট সার্ভিস ১, ১৯৭৫ সালের পর নাম হয় ১ম বাংলাদেশ ওয়ার কোর্স। এই কোর্স থেকে তিনজন শহীদ, একজন বীর উত্তম, দুইজন বীর বিক্রম ও সতেরোজন বীর প্রতীক — এবং পরবর্তীতে চারজন মেজর জেনারেল, দুইজন রাষ্ট্রদূত ও ছয়জন পিএইচডি ডিগ্রিধারী।',
@@ -101,7 +131,10 @@ export const courses: Course[] = [
   {
     year: { en: '1971', bn: '১৯৭১' },
     title: { en: '1st Bangladesh War Course', bn: '১ম বাংলাদেশ ওয়ার কোর্স' },
-    when: { en: 'Commissioned 09 October · Murti', bn: 'কমিশন ৯ অক্টোবর · মুর্তি' },
+    when: {
+      en: 'Commissioned 09 October · Murti',
+      bn: 'কমিশন ৯ অক্টোবর · মুর্তি',
+    },
     body: {
       en: 'The first batch of sixty-one officer cadets was selected from the battlefield and trained by Indian Army officers at an ad-hoc academy in Jalpaiguri district.',
       bn: 'যুদ্ধক্ষেত্র থেকে নির্বাচিত ৬১ জন অফিসার ক্যাডেটের প্রথম দলটি জলপাইগুড়ি জেলার একটি অস্থায়ী একাডেমিতে ভারতীয় সেনা অফিসারদের কাছে প্রশিক্ষণ নেয়।',
@@ -121,7 +154,10 @@ export const courses: Course[] = [
   {
     year: { en: '1972', bn: '১৯৭২' },
     title: { en: '2nd Bangladesh War Course', bn: '২য় বাংলাদেশ ওয়ার কোর্স' },
-    when: { en: 'Commissioned 05 August · Dhaka Cantonment', bn: 'কমিশন ৫ আগস্ট · ঢাকা সেনানিবাস' },
+    when: {
+      en: 'Commissioned 05 August · Dhaka Cantonment',
+      bn: 'কমিশন ৫ আগস্ট · ঢাকা সেনানিবাস',
+    },
     body: {
       en: 'Seventy cadets began at Murti in November 1971. Victory came before the twelve weeks ended. Forty-six passed out under President Justice Abu Sayeed Chowdhury.',
       bn: '১৯৭১ সালের নভেম্বরে মুর্তিতে ৭০ জন ক্যাডেটের প্রশিক্ষণ শুরু হয়। বারো সপ্তাহ শেষের আগেই বিজয় আসে। রাষ্ট্রপতি বিচারপতি আবু সাঈদ চৌধুরীর উপস্থিতিতে ৪৬ জন কমিশন লাভ করেন।',
@@ -134,7 +170,10 @@ export const courses: Course[] = [
     medals: [
       { n: { en: '3', bn: '৩' }, l: { en: 'Bir Bikram', bn: 'বীর বিক্রম' } },
       { n: { en: '5', bn: '৫' }, l: { en: 'Bir Protik', bn: 'বীর প্রতীক' } },
-      { n: { en: '46', bn: '৪৬' }, l: { en: 'Passed out', bn: 'কমিশনপ্রাপ্ত' } },
+      {
+        n: { en: '46', bn: '৪৬' },
+        l: { en: 'Passed out', bn: 'কমিশনপ্রাপ্ত' },
+      },
     ],
   },
 ];
@@ -147,7 +186,10 @@ export const archive: ArchiveItem[] = [
     height: 532,
     document: true,
     title: { en: 'জয় বাংলা — the weekly', bn: 'সাপ্তাহিক জয় বাংলা' },
-    meta: { en: '15 October 1971 · Mujibnagar', bn: '১৫ অক্টোবর ১৯৭১ · মুজিবনগর' },
+    meta: {
+      en: '15 October 1971 · Mujibnagar',
+      bn: '১৫ অক্টোবর ১৯৭১ · মুজিবনগর',
+    },
   },
   {
     id: 'guard-of-honour',
@@ -171,7 +213,10 @@ export const archive: ArchiveItem[] = [
     width: 603,
     height: 598,
     document: true,
-    title: { en: 'Passing-out photo report', bn: 'কমিশন কুচকাওয়াজের ছবি প্রতিবেদন' },
+    title: {
+      en: 'Passing-out photo report',
+      bn: 'কমিশন কুচকাওয়াজের ছবি প্রতিবেদন',
+    },
     meta: { en: 'Four frames · Mukti Bahini', bn: 'চারটি ছবি · মুক্তিবাহিনী' },
   },
   {
@@ -180,7 +225,10 @@ export const archive: ArchiveItem[] = [
     width: 540,
     height: 400,
     title: { en: 'The parchment commission', bn: 'সনদপত্র হস্তান্তর' },
-    meta: { en: 'Handed over by the Acting President', bn: 'অস্থায়ী রাষ্ট্রপতির হাত থেকে' },
+    meta: {
+      en: 'Handed over by the Acting President',
+      bn: 'অস্থায়ী রাষ্ট্রপতির হাত থেকে',
+    },
   },
   {
     id: 'joy-bangla-press',
@@ -189,7 +237,10 @@ export const archive: ArchiveItem[] = [
     height: 482,
     document: true,
     title: { en: 'চিত্র পরিচিতি', bn: 'চিত্র পরিচিতি' },
-    meta: { en: 'Joy Bangla Press · Mujibnagar', bn: 'জয় বাংলা প্রেস · মুজিবনগর' },
+    meta: {
+      en: 'Joy Bangla Press · Mujibnagar',
+      bn: 'জয় বাংলা প্রেস · মুজিবনগর',
+    },
   },
   {
     id: 'murti-map',
@@ -197,7 +248,10 @@ export const archive: ArchiveItem[] = [
     width: 720,
     height: 1012,
     title: { en: 'Murti, in the hill jungle', bn: 'মুর্তি, পাহাড়ি জঙ্গলে' },
-    meta: { en: 'North of Siliguri · Bhutan border', bn: 'শিলিগুড়ির উত্তরে · ভুটান সীমান্ত' },
+    meta: {
+      en: 'North of Siliguri · Bhutan border',
+      bn: 'শিলিগুড়ির উত্তরে · ভুটান সীমান্ত',
+    },
   },
   {
     id: 'parade',
@@ -222,7 +276,10 @@ export const archive: ArchiveItem[] = [
     height: 512,
     document: true,
     title: { en: '1st Bangladesh War Course', bn: '১ম বাংলাদেশ ওয়ার কোর্স' },
-    meta: { en: '9 October 1971 · with name key', bn: '৯ অক্টোবর ১৯৭১ · নামসহ' },
+    meta: {
+      en: '9 October 1971 · with name key',
+      bn: '৯ অক্টোবর ১৯৭১ · নামসহ',
+    },
   },
   {
     id: 'course-2nd',
@@ -230,7 +287,10 @@ export const archive: ArchiveItem[] = [
     width: 1290,
     height: 1219,
     document: true,
-    title: { en: 'Second Short Service Commission', bn: 'দ্বিতীয় শর্ট সার্ভিস কমিশন' },
+    title: {
+      en: 'Second Short Service Commission',
+      bn: 'দ্বিতীয় শর্ট সার্ভিস কমিশন',
+    },
     meta: { en: '5 August 1972 · with name key', bn: '৫ আগস্ট ১৯৭২ · নামসহ' },
   },
 ];
