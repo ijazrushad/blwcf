@@ -1,5 +1,5 @@
-/* Ported from Treatment F: sticky bar, 80px tall, with the language
-   toggle as a rotated red screenprint block. */
+/* Sticky bar, 80px tall, with the language toggle set as a rotated red
+   screenprint block to match the cut numeral in the headline. */
 
 .nav {
   position: sticky;

@@ -10,17 +10,33 @@
 export const locales = ['en', 'bn'] as const;
 export type Locale = (typeof locales)[number];
 
+/**
+ * The public origin, used for canonical URLs, hreflang, the sitemap and the
+ * social card.
+ *
+ * This has to match the domain the site is actually served from. A canonical
+ * pointing at a hostname that does not answer tells search engines to index
+ * nothing. Set NEXT_PUBLIC_SITE_URL in the Vercel project if the live domain
+ * is ever anything other than the default below.
+ */
+export const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://blwcf.org'
+).replace(/\/$/, '');
+
+/** The locale served at `/`, and the hreflang x-default target. */
+export const defaultLocale: Locale = 'en';
+
 export type Bi = { en: string; bn: string };
 
 export type ArchiveItem = {
   id: string;
   src: string;
+  /** True pixel size of the scan. The gallery and the reel lay out from these,
+   *  so a wrong number shows up as a crop or a layout shift. */
   width: number;
   height: number;
   title: Bi;
   meta: Bi;
-  /** Documents carry small print and need to be read, not just admired. */
-  document?: boolean;
 };
 
 export const nav: { href: string; label: Bi }[] = [
@@ -184,7 +200,6 @@ export const archive: ArchiveItem[] = [
     src: '/archive/joy-bangla.jpg',
     width: 669,
     height: 532,
-    document: true,
     title: { en: 'জয় বাংলা — the weekly', bn: 'সাপ্তাহিক জয় বাংলা' },
     meta: {
       en: '15 October 1971 · Mujibnagar',
@@ -212,7 +227,6 @@ export const archive: ArchiveItem[] = [
     src: '/archive/photo-report.jpg',
     width: 603,
     height: 598,
-    document: true,
     title: {
       en: 'Passing-out photo report',
       bn: 'কমিশন কুচকাওয়াজের ছবি প্রতিবেদন',
@@ -235,7 +249,6 @@ export const archive: ArchiveItem[] = [
     src: '/archive/joy-bangla-press.jpg',
     width: 720,
     height: 482,
-    document: true,
     title: { en: 'চিত্র পরিচিতি', bn: 'চিত্র পরিচিতি' },
     meta: {
       en: 'Joy Bangla Press · Mujibnagar',
@@ -274,7 +287,6 @@ export const archive: ArchiveItem[] = [
     src: '/archive/course-1st.jpg',
     width: 720,
     height: 512,
-    document: true,
     title: { en: '1st Bangladesh War Course', bn: '১ম বাংলাদেশ ওয়ার কোর্স' },
     meta: {
       en: '9 October 1971 · with name key',
@@ -286,7 +298,6 @@ export const archive: ArchiveItem[] = [
     src: '/archive/course-2nd.jpg',
     width: 1290,
     height: 1219,
-    document: true,
     title: {
       en: 'Second Short Service Commission',
       bn: 'দ্বিতীয় শর্ট সার্ভিস কমিশন',
@@ -310,22 +321,45 @@ export const verse = {
   by: 'সিকান্দার আবু জাফর',
 };
 
-export const sections = {
+/**
+ * A section heading, split in two so the second half can be set in italic.
+ *
+ * How the halves join differs by language, which is why it is spelled out
+ * rather than left to a space in the string: English "The archive" takes a
+ * space, the Bengali "সংগ্রহশালা" is one word and takes none.
+ */
+export type SectionTitle = {
+  lead: Bi;
+  italic: Bi;
+  /** Languages where the two halves run together with no space between. */
+  tight?: { en: boolean; bn: boolean };
+  /** True where the italic half starts a new line instead. */
+  stacked?: boolean;
+};
+
+export const sections: Record<
+  'archive' | 'courses',
+  { n: string; kick: Bi; title: SectionTitle; mark: Bi }
+> = {
   archive: {
     n: '01',
     kick: { en: 'glimpses', bn: 'কিছু মুহূর্ত' },
-    title: { en: 'The archive', bn: 'সংগ্রহশালা' },
-    titleItalic: { en: 'archive', bn: 'শালা' },
-    mark: { en: 'সংগ্রহশালা', bn: 'The archive' },
-    note: {
-      en: 'Select any plate to read it full size',
-      bn: 'পূর্ণ আকারে দেখতে যেকোনো ছবিতে ক্লিক করুন',
+    title: {
+      lead: { en: 'The', bn: 'সংগ্রহ' },
+      italic: { en: 'archive', bn: 'শালা' },
+      tight: { en: false, bn: true },
     },
+    /* the mark shows the other language's wording, in both languages */
+    mark: { en: 'সংগ্রহশালা', bn: 'The archive' },
   },
   courses: {
     n: '02',
     kick: { en: 'the record', bn: 'ইতিহাস' },
-    title: { en: 'Two courses, one beginning', bn: 'দুইটি কোর্স, একটি সূচনা' },
+    title: {
+      lead: { en: 'Two courses,', bn: 'দুইটি কোর্স,' },
+      italic: { en: 'one beginning', bn: 'একটি সূচনা' },
+      stacked: true,
+    },
     mark: { en: 'দুইটি ওয়ার কোর্স', bn: 'Two war courses' },
   },
 };
@@ -364,7 +398,6 @@ export const footer = {
 
 export const ui = {
   switchTo: { en: 'বাংলা', bn: 'English' },
-  menu: { en: 'Menu', bn: 'মেনু' },
   close: { en: 'Close', bn: 'বন্ধ করুন' },
   prev: { en: 'Previous', bn: 'পূর্ববর্তী' },
   next: { en: 'Next', bn: 'পরবর্তী' },

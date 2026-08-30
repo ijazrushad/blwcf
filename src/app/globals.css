@@ -1,6 +1,6 @@
 /* ============================================================
    BLWCF — design tokens and global styles
-   Palette: Bone.  Grain: Medium.
+   Tokens, the paper textures, and the shared layout helpers.
    Bengali display type needs ~25-30% more line-height than Latin,
    so type sizing is declared per language throughout.
    ============================================================ */
@@ -134,7 +134,7 @@ button {
   gap: var(--gutter);
 }
 
-/* the mockup collapses the twelve-column grid to one below 980px */
+/* the twelve-column grid collapses to a single column below 980px */
 @media (max-width: 980px) {
   .g12 {
     grid-template-columns: 1fr;
@@ -144,16 +144,6 @@ button {
 
 .mono {
   font-family: var(--font-mono), ui-monospace, monospace;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
 }
 
 /* ---- tape strip used on pasted paper sheets ---- */

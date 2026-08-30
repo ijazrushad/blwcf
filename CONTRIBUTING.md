@@ -83,11 +83,12 @@ Read the "Things worth knowing before you edit" section of the
 2. Append an entry to `archive` in `src/content/site.ts` with its **real pixel
    dimensions** — the gallery and the reel both lay out from these, so a wrong
    number produces a crop or a layout shift.
-3. Set `document: true` if it carries small print that has to stay readable.
-4. Write both `title` and `meta` in English and Bengali.
+3. Write both `title` and `meta` in English and Bengali. These are not
+   decoration: they become the plate's caption, its accessible name, and the
+   `ImageObject` description a search engine reads.
 
-The reel picks it up automatically. The four plates in the broken grid are
-chosen by id in `Archive.tsx`.
+The reel picks it up automatically. The four plates in the grid above the reel
+are chosen by id in `Archive.tsx`.
 
 ## Changing a historical fact
 

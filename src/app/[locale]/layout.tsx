@@ -9,7 +9,14 @@ import {
   Hind_Siliguri,
   Noto_Serif_Bengali,
 } from 'next/font/google';
-import { locales, type Locale } from '@/content/site';
+import {
+  brand,
+  defaultLocale,
+  locales,
+  siteUrl,
+  type Locale,
+} from '@/content/site';
+import { serializeJsonLd, structuredData } from '@/content/structured-data';
 import '../globals.css';
 
 /*
@@ -96,35 +103,102 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+/**
+ * What the page says about itself when it is not being looked at: search
+ * results, a shared link, an AI answer that cites it. Kept next to the
+ * structured data in `generateMetadata` so the two can never drift apart.
+ */
+const page = {
+  en: {
+    title: 'Bangladesh Liberation War Courses Foundation',
+    description:
+      'The 1st and 2nd Bangladesh War Courses, 1971–1972. Sixty-one guerrilla cadets commissioned at Murti on 9 October 1971, and the forty-six who followed.',
+    social:
+      'Those Magnificent 61 of ’71 — the officer courses of the Bangladesh Liberation War.',
+    cardAlt:
+      'Acting President Syed Nazrul Islam inspecting the guard of honour of the first batch of newly commissioned officers of the Mukti Bahini, Murti, 9 October 1971.',
+  },
+  bn: {
+    title: 'বাংলাদেশ লিবারেশন ওয়ার কোর্সেস ফাউন্ডেশন',
+    description:
+      '১ম ও ২য় বাংলাদেশ ওয়ার কোর্স, ১৯৭১–১৯৭২। ১৯৭১ সালের ৯ অক্টোবর মুর্তিতে কমিশনপ্রাপ্ত ৬১ জন গেরিলা ক্যাডেট।',
+    social: 'একাত্তরের সেই ৬১ বীর',
+    cardAlt:
+      'অস্থায়ী রাষ্ট্রপতি সৈয়দ নজরুল ইসলাম মুক্তিবাহিনীর সদ্য কমিশনপ্রাপ্ত প্রথম দলের গার্ড অব অনার পরিদর্শন করছেন। মুর্তি, ৯ অক্টোবর ১৯৭১।',
+  },
+} satisfies Record<
+  Locale,
+  { title: string; description: string; social: string; cardAlt: string }
+>;
+
+/**
+ * The social card is a plain file in `public/` referenced by hand rather than
+ * an `opengraph-image` convention file. Inside a dynamic `[locale]` segment
+ * that convention cannot resolve the segment into the absolute URL it emits,
+ * and produces `/-/opengraph-image.jpg` — a link to nothing.
+ */
+const socialCard = {
+  url: '/social-card.jpg',
+  width: 1200,
+  height: 630,
+  type: 'image/jpeg',
+} as const;
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const bn = locale === 'bn';
+  const l = locale as Locale;
+  const copy = page[l];
 
   return {
-    metadataBase: new URL('https://blwcf.org'),
-    title: bn
-      ? 'বাংলাদেশ লিবারেশন ওয়ার কোর্সেস ফাউন্ডেশন'
-      : 'Bangladesh Liberation War Courses Foundation',
-    description: bn
-      ? '১ম ও ২য় বাংলাদেশ ওয়ার কোর্স, ১৯৭১–১৯৭২। ১৯৭১ সালের ৯ অক্টোবর মুর্তিতে কমিশনপ্রাপ্ত ৬১ জন গেরিলা ক্যাডেট।'
-      : 'The 1st and 2nd Bangladesh War Courses, 1971–1972. Sixty-one guerrilla cadets commissioned at Murti on 9 October 1971, and the forty-six who followed.',
+    metadataBase: new URL(siteUrl),
+    title: copy.title,
+    description: copy.description,
+    applicationName: brand.short.en,
+    publisher: brand.full[l],
     alternates: {
-      canonical: `/${locale}`,
-      languages: { en: '/en', bn: '/bn' },
+      canonical: `/${l}`,
+      languages: {
+        en: '/en',
+        bn: '/bn',
+        /* which version to offer a visitor whose language matches neither */
+        'x-default': `/${defaultLocale}`,
+      },
+    },
+    /*
+     * max-image-preview:large is the one that matters here. Without it Google
+     * shows a thumbnail; with it the scans can appear full width in Images and
+     * Discover, which for an archive is most of the point.
+     */
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
     },
     openGraph: {
       type: 'website',
-      locale: bn ? 'bn_BD' : 'en_US',
-      title: bn
-        ? 'বাংলাদেশ লিবারেশন ওয়ার কোর্সেস ফাউন্ডেশন'
-        : 'Bangladesh Liberation War Courses Foundation',
-      description: bn
-        ? 'একাত্তরের সেই ৬১ বীর'
-        : 'Those Magnificent 61 of ’71 — the officer courses of the Bangladesh Liberation War.',
+      url: `${siteUrl}/${l}`,
+      siteName: brand.full[l],
+      locale: l === 'bn' ? 'bn_BD' : 'en_US',
+      alternateLocale: l === 'bn' ? 'en_US' : 'bn_BD',
+      title: copy.title,
+      description: copy.social,
+      images: [{ ...socialCard, alt: copy.cardAlt }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: copy.title,
+      description: copy.social,
+      images: [{ ...socialCard, alt: copy.cardAlt }],
     },
   };
 }
@@ -145,10 +219,19 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   if (!locales.includes(locale as Locale)) notFound();
+  const l = locale as Locale;
 
   return (
-    <html lang={locale} className={fontVars} data-scroll-behavior="smooth">
-      <body>{children}</body>
+    <html lang={l} className={fontVars} data-scroll-behavior="smooth">
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(structuredData(l, page[l])),
+          }}
+        />
+      </body>
     </html>
   );
 }
