@@ -5,22 +5,23 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   useAnimationFrame,
   useMotionValue,
-  useReducedMotion,
   useTransform,
   motion,
 } from 'framer-motion';
+import { useSettledReducedMotion } from './Motion';
 import { archive, type Locale } from '@/content/site';
 import s from './ArchiveStrip.module.css';
 
 /**
  * A contact-sheet reel carrying every plate in the archive.
  *
- * The motion is not a plain slide. Each plate travels *out of register* —
- * its red and green inks pulled apart, the image soft, grey and tilted — and
- * pulls into register as it crosses the press line at the centre, where the
- * inks converge, the tilt squares up and the photograph resolves. It falls
- * back out of register as it leaves. This is the misregistration idea from
- * F's cut numeral, expressed as movement.
+ * The motion is not a plain slide. Each plate travels *out of register* — the
+ * printing term for colour plates that do not line up — with its red and green
+ * inks pulled apart and the photograph soft, grey and tilted. As it crosses the
+ * press line at the centre of the strip the inks converge, the tilt squares up
+ * and the photograph resolves; it falls back out of register as it leaves. The
+ * same misregistration appears as a static effect on the red numeral in the
+ * headline, and this is that idea expressed as movement.
  *
  * Widths come from each scan's true ratio at a uniform height, so nothing is
  * ever cropped.
@@ -41,7 +42,12 @@ export default function ArchiveStrip({
   locale: Locale;
   onOpen: (index: number) => void;
 }) {
-  const reduce = useReducedMotion();
+  /*
+   * This chooses between two different subtrees, so it has to settle after
+   * hydration — see the hook. Until it does, everyone gets the reel, which is
+   * also what the prerendered HTML contains.
+   */
+  const reduce = useSettledReducedMotion();
 
   const label =
     locale === 'en'
@@ -308,14 +314,20 @@ function Slide({
       onClick={() => onSelect(index)}
       tabIndex={duplicate ? -1 : 0}
       aria-hidden={duplicate || undefined}
-      aria-label={item.title[locale]}
+      /*
+       * No aria-label. The plate number and caption below are the button's
+       * visible text, so letting them be its accessible name keeps the two
+       * identical by construction — which is what WCAG "Label in Name" asks
+       * for, and what lets someone using speech input say what they can see.
+       */
       /* width follows the true ratio at a fixed height, so no plate is cut */
       style={{ aspectRatio: `${item.width} / ${item.height}` }}
     >
       <span className={s.sheet}>
+        {/* the button carries the name; the image inside it is presentational */}
         <Image
           src={item.src}
-          alt={duplicate ? '' : item.title[locale]}
+          alt=""
           width={item.width}
           height={item.height}
           sizes="(max-width: 700px) 44vw, 26vw"

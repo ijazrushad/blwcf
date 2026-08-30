@@ -27,9 +27,11 @@ Every page is prerendered to static HTML at build time.
 - [Things worth knowing before you edit](#things-worth-knowing-before-you-edit)
 - [Adding an archive plate](#adding-an-archive-plate)
 - [Performance](#performance)
+- [Findability](#findability)
 - [Security](#security)
 - [CI/CD](#cicd)
 - [Deploying](#deploying)
+- [Releases and versioning](#releases-and-versioning)
 - [Dependency policy](#dependency-policy)
 - [Contributing](#contributing)
 - [Still outstanding](#still-outstanding)
@@ -100,20 +102,24 @@ npm run verify    # format:check + lint + typecheck + build
 ```
 src/
   app/
-    globals.css          design tokens, paper grain, reduced-motion reset
+    globals.css          design tokens, paper textures, reduced-motion reset
     not-found.tsx        supplies its own <html>, see note below
+    robots.ts            robots.txt
+    sitemap.ts           sitemap.xml, with hreflang alternates
     [locale]/
-      layout.tsx         the root layout — fonts and <html lang>
+      layout.tsx         the root layout — fonts, metadata, <html lang>
       page.tsx           every section of the single page
       page.module.css
   components/
     Nav.tsx              header and language toggle (server component)
-    Motion.tsx           Develop / Rise / Parallax / Stagger primitives
-    Archive.tsx          the broken-grid plates and the lightbox
+    Motion.tsx           Develop / Rise / Parallax, and the reduced-motion hook
+    Archive.tsx          the four grid plates and the lightbox
     ArchiveStrip.tsx     the contact-sheet reel
   content/
-    site.ts              all bilingual copy and image metadata
+    site.ts              all bilingual copy, image metadata, the site URL
+    structured-data.ts   the JSON-LD built from site.ts
 public/archive/          the scans
+public/social-card.jpg   the 1200×630 Open Graph image
 .github/workflows/       CI, security, CodeQL, Lighthouse, Scorecard
 ```
 
@@ -125,9 +131,10 @@ HTML — the build output labels them `● (SSG)`. Any other locale hits
 `notFound()`.
 
 **Content.** `page.tsx` is a server component. It reads `site.ts`, picks
-`[locale]` off every bilingual string, and passes plain values down. Only four
-things are client components: the four motion primitives, the reel, the
-lightbox, and nothing else.
+`[locale]` off every bilingual string, and passes plain values down. Only three
+files are client components: the motion primitives, the reel, and the archive
+grid with its lightbox. Everything else renders on the server and ships no
+JavaScript.
 
 **Type.** Seven font families, because Bengali and Latin need different
 treatment at display sizes and this design uses both in both languages. The
@@ -139,6 +146,14 @@ contrast resolving, the way a print comes up in a tray) rather than sliding;
 text rises a short distance; parallax is small enough to read as depth in the
 paper. Everything collapses to a plain fade under `prefers-reduced-motion`, and
 the reel swaps to a hand-scrolled rail entirely.
+
+That last swap is why `Motion.tsx` exports `useSettledReducedMotion` instead of
+using framer-motion's `useReducedMotion` directly. The framer hook reads
+`matchMedia` during render, which on a prerendered page disagrees with the
+server on the visitor's very first render and breaks hydration. The exported
+hook is a `useSyncExternalStore` whose server snapshot matches the HTML. Use it
+for anything that renders on the server; the lightbox only ever mounts on a
+click, so it can use the framer hook as-is.
 
 ## Things worth knowing before you edit
 
@@ -179,9 +194,15 @@ be selected by a stylesheet before you add one.
 ## Adding an archive plate
 
 Drop the file in `public/archive/`, then append an entry to `archive` in
-`src/content/site.ts` with its real pixel dimensions. Set `document: true` if
-it carries small print. The reel picks it up automatically; the four plates in
-the broken grid are chosen by id in `Archive.tsx`.
+`src/content/site.ts` with its real pixel dimensions and both titles. The reel
+picks it up automatically, the lightbox walks it, and it is described in the
+page's structured data — the four plates in the grid above the reel are chosen
+by id in `Archive.tsx`.
+
+One scan needs a second file. `photo-report.jpg` also appears as a CSS
+`background-image` behind the hero lettering, which cannot go through
+`next/image`, so an AVIF copy sits beside it and is offered by `image-set()`.
+If that scan is ever replaced, regenerate `photo-report.avif` alongside it.
 
 ## Performance
 
@@ -220,6 +241,84 @@ What is deliberate:
 public, max-age=31536000, immutable`, and `minimumCacheTTL` to match on the
   image optimiser). A better scan arrives as a new entry, not as a replacement
   in place.
+
+Measured on the build in this repository, both locales:
+
+|         | Performance | Accessibility | Best practices | SEO |
+| ------- | ----------- | ------------- | -------------- | --- |
+| Desktop | 97          | 100           | 100            | 100 |
+| Mobile  | 100         | 100           | 100            | 100 |
+
+Mobile Largest Contentful Paint is 1.1–1.2s with a Cumulative Layout Shift of 0
+and no blocking time, on Lighthouse's throttled Moto-G profile.
+
+### On mobile
+
+The layout collapses to a single column below 980px and the reel drops to a
+165–220px plate height, so nothing is cropped and nothing scrolls sideways.
+Two things are worth knowing:
+
+- **The two header links are hidden below 980px.** At 390px the seal, the
+  wordmark, both links and the language toggle do not fit on one 80px bar. The
+  page is one continuous scroll with two sections and the footer carries the
+  same links, so nothing is unreachable — but if a header menu is ever wanted,
+  this is the gap it would fill.
+- **The smallest labels are 9–11px.** Lighthouse counts about 18% of the
+  English page as below its 12px threshold. That is the letterspaced monospace
+  micro-type the design is built on, and the letterspacing is what makes it
+  legible; it is a choice, not an oversight. Bengali is set larger throughout
+  and comes out at 97%.
+
+## Findability
+
+There is no analytics script, no tag manager and no SEO plugin. Everything
+below is part of the framework or part of the page.
+
+**The domain has to be right.** `siteUrl` in `src/content/site.ts` feeds the
+canonical link, the hreflang set, the sitemap and the social card, and it
+defaults to `https://blwcf.org`. A canonical pointing at a hostname that does
+not answer tells search engines to index nothing, so if the live domain is ever
+anything else, set `NEXT_PUBLIC_SITE_URL` in the Vercel project.
+
+| What                                      | Where                                                                                  |
+| ----------------------------------------- | -------------------------------------------------------------------------------------- |
+| `robots.txt`                              | [`src/app/robots.ts`](src/app/robots.ts)                                               |
+| `sitemap.xml`, with hreflang alternates   | [`src/app/sitemap.ts`](src/app/sitemap.ts)                                             |
+| JSON-LD structured data                   | [`src/content/structured-data.ts`](src/content/structured-data.ts)                     |
+| Titles, descriptions, Open Graph, Twitter | `generateMetadata` in [`src/app/[locale]/layout.tsx`](src/app/%5Blocale%5D/layout.tsx) |
+| Social card, 1200×630                     | `public/social-card.jpg`                                                               |
+
+Four things are doing the real work:
+
+- **`hreflang` on both pages plus `x-default`.** Two languages at two URLs are
+  otherwise read as duplicates competing with each other. This tells a search
+  engine they are the same page in two languages and which to show a visitor
+  who reads neither.
+- **`max-image-preview: large`.** Without it Google shows a thumbnail. With it
+  the scans can run full width in Images and Discover, which for an archive is
+  most of the point.
+- **Structured data describing every plate as an `ImageObject`** with the
+  caption the page shows beside it. That is what lets the photographs surface
+  as results in their own right rather than only the page they sit on.
+- **Real HTML.** One `<h1>`, headings that descend without gaps, a `<main>`,
+  `alt` text on everything, and `lang="bn"` on the Bengali that appears inside
+  the English page. Both an AI answer engine and a screen reader read the same
+  markup, and neither has to guess.
+
+### On `llms.txt`
+
+Deliberately not added. It is worth knowing why, because it comes up.
+
+The proposal is that a site publishes a plain-text summary at `/llms.txt` for
+AI crawlers. Adoption sits around one site in ten, but measurements of crawler
+traffic show GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot and Google-Extended
+overwhelmingly ignoring the file and fetching the HTML instead, and as of early
+2026 no major AI vendor has committed to reading it in production. Among the
+domains most often cited by AI answers, almost none publish one.
+
+The things that do get a page cited are the ones above: clean semantic HTML,
+accurate structured data, and not blocking the retrieval crawlers. If that
+changes, `llms.txt` is a static file in `public/` and ten minutes of work.
 
 ## Security
 
@@ -300,6 +399,30 @@ needs one.
 
 Rolling back is Vercel's **Instant Rollback** on the previous production
 deployment — faster than a revert commit, and the revert can follow at leisure.
+
+## Releases and versioning
+
+There are none, on purpose.
+
+This is an application, not a library. It is never installed by anyone, never
+published to npm — `private: true` in `package.json` is what enforces that —
+and it has no consumers who need to pin a version. Every merge to `main` goes
+live, so a git tag would only ever restate what the deployment history already
+records. The `version` field exists because npm wants one.
+
+What actually serves the purposes a release process usually serves:
+
+| You want to…                  | Use                                                      |
+| ----------------------------- | -------------------------------------------------------- |
+| Know what is live             | The Vercel dashboard — every deployment names its commit |
+| Go back to a known-good state | Vercel **Instant Rollback**, then revert at leisure      |
+| See what changed and why      | `git log` — commits are Conventional Commits             |
+| Compare two states            | The GitHub compare view between the two commits          |
+
+This would be worth revisiting if the site ever needed a staging environment
+promoting to production on a schedule, or if the content had to be citable at a
+fixed point in time — an archive that people cite in writing is a plausible
+reason to start tagging. Neither is true yet.
 
 ## Dependency policy
 

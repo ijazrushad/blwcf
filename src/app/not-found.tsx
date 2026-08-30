@@ -7,6 +7,9 @@ import Link from 'next/link';
 export default function NotFound() {
   return (
     <html lang="en">
+      {/* React hoists these into <head>; this shell has no layout to do it. */}
+      <title>Not found — Bangladesh Liberation War Courses Foundation</title>
+      <meta name="robots" content="noindex, follow" />
       <body
         style={{
           background: '#efe9dc',
