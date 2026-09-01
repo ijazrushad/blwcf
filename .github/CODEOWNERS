@@ -1,0 +1,15 @@
+# Every pull request gets a review from the maintainers.
+# Order matters — the last matching pattern wins.
+
+*                       @ijazrushad
+
+# The security posture and the pipeline are not routine edits.
+/.github/               @ijazrushad
+/next.config.ts         @ijazrushad
+/SECURITY.md            @ijazrushad
+
+# The historical record: names, dates, unit designations and the Bengali
+# translations. Changes here are checked against a source, not just reviewed
+# for style.
+/src/content/           @ijazrushad
+/public/archive/        @ijazrushad

@@ -1,0 +1,69 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Asia/Dhaka
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    # Two majors are held back on purpose. Both break `npm run lint`, which is
+    # a merge gate, so without these Dependabot reopens a red pull request
+    # every Monday. The reasoning is in the README's dependency policy; delete
+    # the matching entry here once the blocker below clears, and let the
+    # upgrade come through normally.
+    ignore:
+      # ESLint 10 removed context.getFilename(). The eslint-plugin-react that
+      # eslint-config-next bundles still calls it, so eslint crashes on start.
+      - dependency-name: eslint
+        versions: ['>=10']
+      # typescript-eslint refuses to load against the TypeScript 7 API.
+      # `tsc --noEmit` is clean on 7 — it is only the lint stage that breaks.
+      # https://github.com/typescript-eslint/typescript-eslint/issues/10940
+      - dependency-name: typescript
+        versions: ['>=7']
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(deps-dev)'
+    groups:
+      # One PR for the framework, because next, react and react-dom have to
+      # move together — three separate PRs would each fail on their own.
+      next-and-react:
+        patterns:
+          - next
+          - eslint-config-next
+          - react
+          - react-dom
+          - '@types/react'
+          - '@types/react-dom'
+      # Everything else that is only a build-time concern, batched.
+      dev-tooling:
+        dependency-type: development
+        exclude-patterns:
+          - eslint-config-next
+          - '@types/react'
+          - '@types/react-dom'
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Asia/Dhaka
+    labels:
+      - dependencies
+      - ci
+    commit-message:
+      prefix: 'ci(deps)'
+    groups:
+      actions:
+        patterns:
+          - '*'

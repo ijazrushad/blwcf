@@ -1,10 +1,19 @@
 /* ============================================================
-   Faithful port of Mockups/art/f-bilingual.html (Treatment F,
-   the C + E hybrid).
+   The single page, section by section, in the order it renders:
+   hero, dates, archive, figures, courses, verse, footer.
 
-   Grid placements, type sizes, rotations and the 1.5px ink rules
-   are carried over from the mockup as-is. Where the mockup used
-   data-lang, this uses html[lang] instead.
+   Two conventions run through the whole file.
+
+   Rotations and the 1.5px rules are the printed-matter treatment:
+   plates sit slightly askew as though pasted down, and dividers are
+   the weight of a printing rule rather than a hairline border. Both
+   are deliberate; a value that looks like a typo usually is not.
+
+   Every rule that sets display type is followed by an
+   html[lang='bn'] rule that resets it. Bengali needs roughly 25-30%
+   more line-height than Latin at the same size, and its matras and
+   conjuncts clip against a Latin line box. Size Bengali next to the
+   rule it overrides, not in a global override at the bottom.
    ============================================================ */
 
 /* ================= hero ================= */
@@ -63,7 +72,18 @@ html[lang='bn'] .motto {
 /* masked hero word — photograph shows through the letterforms */
 .masked {
   grid-column: 4 / 13;
+  /*
+   * The one photograph on the page that cannot go through next/image: it is
+   * showing through the letterforms via background-clip, which needs a CSS
+   * background. So the modern format is offered by hand. The plain url() below
+   * stays first as the fallback for browsers without image-set() type support.
+   * If photo-report.jpg is ever replaced, regenerate the .avif beside it.
+   */
   background-image: url('/archive/photo-report.jpg');
+  background-image: image-set(
+    url('/archive/photo-report.avif') type('image/avif'),
+    url('/archive/photo-report.jpg') type('image/jpeg')
+  );
   background-size: cover;
   background-position: center 26%;
   -webkit-background-clip: text;
@@ -716,14 +736,14 @@ html[lang='bn'] .tr {
   grid-column: 11 / 13;
 }
 
-.footer h5 {
+.footer h2 {
   font-family: var(--font-instrument), serif;
   font-size: 20px;
   margin-bottom: 12px;
   font-weight: 400;
 }
 
-html[lang='bn'] .footer h5 {
+html[lang='bn'] .footer h2 {
   font-family: var(--font-baloo), sans-serif;
   font-weight: 700;
   font-size: 19px;
@@ -775,7 +795,7 @@ html[lang='bn'] .footer a {
 }
 
 /* ================= responsive =================
-   Single column below 980px, matching the mockup. */
+   Single column below 980px. */
 @media (max-width: 980px) {
   .motto,
   .masked,

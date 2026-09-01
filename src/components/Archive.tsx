@@ -9,7 +9,11 @@ import s from './Archive.module.css';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/** The four plates the mockup places in the broken grid, in its order. */
+/**
+ * The four plates that appear in the grid above the reel, in the order the
+ * grid places them. Everything else in `archive` is still reachable — the reel
+ * carries all of it, and the lightbox walks the whole set.
+ */
 const FEATURED_IDS = [
   'joy-bangla',
   'commission',
@@ -26,7 +30,6 @@ function byId(id: string) {
 export default function Archive({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState<number | null>(null);
 
-  /* the grid carries the mockup's four plates; the reel carries them all */
   const shown = FEATURED_IDS.map(byId);
 
   /* the lightbox walks the whole archive regardless of what the grid shows */
@@ -192,14 +195,19 @@ function Lightbox({
             exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.99 }}
             transition={{ duration: 0.4, ease: EASE }}
           >
+            {/*
+             * quality 95 rather than 100: at 100 the encoder stops discarding
+             * anything and the file roughly doubles, which on a soft 1290px
+             * scan buys no visible detail. `priority` would only add a preload
+             * hint for an image the browser is already fetching on demand.
+             */}
             <Image
               src={item.src}
               alt={item.title[locale]}
               width={item.width}
               height={item.height}
               sizes="100vw"
-              quality={100}
-              priority
+              quality={95}
             />
           </motion.div>
         </AnimatePresence>
