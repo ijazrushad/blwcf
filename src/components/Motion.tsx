@@ -24,16 +24,19 @@ export function Develop({
   children,
   delay = 0,
   className,
+  style,
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   const reduce = useReducedMotion();
 
   return (
     <motion.div
       className={className}
+      style={style}
       /*
        * Matches the mockup's .dev reveal: opacity and blur only, no scale.
        * Animating scale would write to `transform` and wipe out the static
