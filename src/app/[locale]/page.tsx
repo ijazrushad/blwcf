@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import Nav from '@/components/Nav';
 import Archive from '@/components/Archive';
+import CourseArticle from '@/components/CourseArticle';
 import { Develop, Parallax, Rise } from '@/components/Motion';
 import {
   archive,
@@ -150,42 +151,12 @@ export default async function Page({
           </div>
 
           {courses.map((c, i) => (
-            <article
+            <CourseArticle
               key={c.year.en}
-              className={`${s.cse} ${i === 0 ? s.c1 : s.c2}`}
-            >
-              <div className="wrap">
-                <div className="g12">
-                  <Develop className={s.cseIm}>
-                    <Image
-                      src={c.image.src}
-                      alt={c.title[l]}
-                      width={c.image.width}
-                      height={c.image.height}
-                      sizes="(max-width: 980px) 92vw, 56vw"
-                      quality={95}
-                    />
-                  </Develop>
-
-                  <div className={`${s.tx} ${s.sheet}`}>
-                    <span className="tape" aria-hidden />
-                    <div className={s.yr}>{c.year[l]}</div>
-                    <h3>{c.title[l]}</h3>
-                    <div className={s.dt2}>{c.when[l]}</div>
-                    <p>{c.body[l]}</p>
-                    <div className={s.hand}>{c.hand[l]}</div>
-                    <div className={s.med}>
-                      {c.medals.map((m) => (
-                        <div key={m.l.en}>
-                          <b>{m.n[l]}</b>
-                          <span>{m.l[l]}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
+              course={c}
+              locale={l}
+              mirrored={i === 1}
+            />
           ))}
         </section>
 

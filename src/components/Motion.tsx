@@ -56,11 +56,13 @@ export function Develop({
   children,
   delay = 0,
   className,
+  style,
   eager = false,
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
+  style?: React.CSSProperties;
   /**
    * For content already in the first viewport. Runs on mount rather than on
    * scroll, and holds opacity at 1 the whole way through. An element sitting
@@ -88,6 +90,7 @@ export function Develop({
     return (
       <motion.div
         className={className}
+        style={style}
         initial={from}
         animate={to}
         transition={transition}
@@ -100,6 +103,7 @@ export function Develop({
   return (
     <motion.div
       className={className}
+      style={style}
       initial={from}
       whileInView={to}
       viewport={{ once: true, amount: 0.18 }}
