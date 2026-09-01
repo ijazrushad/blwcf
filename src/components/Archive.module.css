@@ -1,9 +1,12 @@
 /* ============================================================
-   Archive — F's broken editorial grid.
+   The archive: four plates in a deliberately uneven editorial grid,
+   plus the lightbox.
 
-   The mockup's asymmetric placement and vertical offsets are kept,
-   but each plate's height comes from the true ratio of the scan
-   rather than a hardcoded one, so no document is ever cropped.
+   The plates are placed asymmetrically and offset vertically on
+   purpose — the grid is meant to read as a laid-out page rather than
+   a gallery of equal tiles. Each plate's height comes from the true
+   ratio of its scan rather than a fixed one, so no document is ever
+   cropped and no printed name key is cut off.
    ============================================================ */
 
 .grid {
@@ -70,7 +73,7 @@ html[lang='bn'] .cap {
   text-transform: none;
 }
 
-/* --- the broken grid placements, straight from the mockup --- */
+/* --- the four plate placements that make up the uneven grid --- */
 .r1 {
   grid-column: 1 / 7;
 }

@@ -5,22 +5,23 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   useAnimationFrame,
   useMotionValue,
-  useReducedMotion,
   useTransform,
   motion,
 } from 'framer-motion';
+import { useSettledReducedMotion } from './Motion';
 import { archive, type Locale } from '@/content/site';
 import s from './ArchiveStrip.module.css';
 
 /**
  * A contact-sheet reel carrying every plate in the archive.
  *
- * The motion is not a plain slide. Each plate travels *out of register* —
- * its red and green inks pulled apart, the image soft, grey and tilted — and
- * pulls into register as it crosses the press line at the centre, where the
- * inks converge, the tilt squares up and the photograph resolves. It falls
- * back out of register as it leaves. This is the misregistration idea from
- * F's cut numeral, expressed as movement.
+ * The motion is not a plain slide. Each plate travels *out of register* — the
+ * printing term for colour plates that do not line up — with its red and green
+ * inks pulled apart and the photograph soft, grey and tilted. As it crosses the
+ * press line at the centre of the strip the inks converge, the tilt squares up
+ * and the photograph resolves; it falls back out of register as it leaves. The
+ * same misregistration appears as a static effect on the red numeral in the
+ * headline, and this is that idea expressed as movement.
  *
  * Widths come from each scan's true ratio at a uniform height, so nothing is
  * ever cropped.
@@ -41,7 +42,12 @@ export default function ArchiveStrip({
   locale: Locale;
   onOpen: (index: number) => void;
 }) {
-  const reduce = useReducedMotion();
+  /*
+   * This chooses between two different subtrees, so it has to settle after
+   * hydration — see the hook. Until it does, everyone gets the reel, which is
+   * also what the prerendered HTML contains.
+   */
+  const reduce = useSettledReducedMotion();
 
   const label =
     locale === 'en'
@@ -85,16 +91,62 @@ function Reel({
   const paused = useRef(false);
   const drag = useRef({ active: false, lastX: 0, moved: 0 });
 
+  /*
+   * Layout geometry, sampled only when the layout actually changes. The frame
+   * loop below used to call getBoundingClientRect() once per plate — twenty-two
+   * forced synchronous layouts every frame, which is what made the reel stutter
+   * on slower machines. The plates sit in a static flex row, so their centres
+   * are fixed relative to the track and the only thing moving is the track's
+   * own transform. That makes the per-frame work pure arithmetic.
+   */
+  const geometry = useRef({ centres: [] as number[], line: 0, reach: 0 });
+  /* last value written per plate, so unchanged plates cost no style recalc */
+  const written = useRef<number[]>([]);
+
   /* the track holds the plates twice; one set's width is the wrap distance */
   useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
+    const track = trackRef.current;
+    const viewport = viewportRef.current;
+    if (!track || !viewport) return;
 
-    const measure = () => setHalf(el.scrollWidth / 2);
+    const measure = () => {
+      setHalf(track.scrollWidth / 2);
+
+      const vp = viewport.getBoundingClientRect();
+      /*
+       * Measuring against the track's own rect rather than the viewport's is
+       * what makes this translation-independent: whatever the track is
+       * currently translated by is in both rects and cancels, so these centres
+       * describe the untranslated row. The frame loop then adds the live
+       * translation back. The track is a static, full-width child of .viewport
+       * and .viewport has no horizontal padding, so an untranslated track
+       * starts exactly at the viewport's left edge — which is what lets the
+       * two be compared against `line` below.
+       */
+      const tr = track.getBoundingClientRect();
+
+      geometry.current = {
+        /*
+         * A plate's rect is scaled and rotated, but both transforms are about
+         * its own centre, so the centre this reads is the untransformed one.
+         */
+        centres: slideRefs.current.map((el) => {
+          if (!el) return 0;
+          const r = el.getBoundingClientRect();
+          return r.left + r.width / 2 - tr.left;
+        }),
+        /* the press line, in those same track-relative coordinates */
+        line: vp.width / 2,
+        // how far a plate can be from the line before it is fully out of register
+        reach: Math.max(vp.width * 0.34, 220),
+      };
+      written.current = [];
+    };
     measure();
 
     const ro = new ResizeObserver(measure);
-    ro.observe(el);
+    ro.observe(track);
+    ro.observe(viewport);
     return () => ro.disconnect();
   }, []);
 
@@ -103,40 +155,30 @@ function Reel({
   );
 
   useAnimationFrame((_, delta) => {
-    if (half && !paused.current && !drag.current.active) {
+    const { centres, line, reach } = geometry.current;
+    if (!half || !reach) return;
+
+    if (!paused.current && !drag.current.active) {
       baseX.set(baseX.get() - SPEED * (delta / 1000));
     }
 
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-
-    /*
-     * Drive each plate's registration from how close it is to the press line.
-     * All reads happen before all writes so the browser only lays out once.
-     */
-    const box = viewport.getBoundingClientRect();
-    const centre = box.left + box.width / 2;
-    // how far a plate can be from the line before it is fully out of register
-    const reach = Math.max(box.width * 0.34, 220);
+    /* the same wrap the visual transform uses, so the two never disagree */
+    const trackX = wrapValue(-half, 0, baseX.get());
 
     const slides = slideRefs.current;
-    const focus: number[] = [];
-
     for (let i = 0; i < slides.length; i++) {
       const el = slides[i];
-      if (!el) {
-        focus.push(0);
-        continue;
-      }
-      const r = el.getBoundingClientRect();
-      const d = Math.abs(r.left + r.width / 2 - centre);
+      if (!el) continue;
+
+      const d = Math.abs(centres[i] + trackX - line);
       const t = Math.max(0, 1 - d / reach);
       // ease the falloff so the plate snaps into register near the line
-      focus.push(t * t * (3 - 2 * t));
-    }
+      const f = t * t * (3 - 2 * t);
 
-    for (let i = 0; i < slides.length; i++) {
-      slides[i]?.style.setProperty('--f', focus[i].toFixed(3));
+      /* below the rounding of --f, writing again only costs a recalc */
+      if (Math.abs((written.current[i] ?? -1) - f) < 0.002) continue;
+      written.current[i] = f;
+      el.style.setProperty('--f', f.toFixed(3));
     }
   });
 
@@ -173,10 +215,13 @@ function Reel({
   }, [baseX]);
 
   /* a drag that travelled should not also open the lightbox */
-  const handleSelect = useCallback((index: number) => {
-    if (drag.current.moved > 6) return;
-    onOpen(index);
-  }, [onOpen]);
+  const handleSelect = useCallback(
+    (index: number) => {
+      if (drag.current.moved > 6) return;
+      onOpen(index);
+    },
+    [onOpen]
+  );
 
   const total = archive.length;
 
@@ -269,14 +314,20 @@ function Slide({
       onClick={() => onSelect(index)}
       tabIndex={duplicate ? -1 : 0}
       aria-hidden={duplicate || undefined}
-      aria-label={item.title[locale]}
+      /*
+       * No aria-label. The plate number and caption below are the button's
+       * visible text, so letting them be its accessible name keeps the two
+       * identical by construction — which is what WCAG "Label in Name" asks
+       * for, and what lets someone using speech input say what they can see.
+       */
       /* width follows the true ratio at a fixed height, so no plate is cut */
       style={{ aspectRatio: `${item.width} / ${item.height}` }}
     >
       <span className={s.sheet}>
+        {/* the button carries the name; the image inside it is presentational */}
         <Image
           src={item.src}
-          alt={duplicate ? '' : item.title[locale]}
+          alt=""
           width={item.width}
           height={item.height}
           sizes="(max-width: 700px) 44vw, 26vw"

@@ -1,57 +1,113 @@
 'use client';
 
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-  type Variants,
-} from 'framer-motion';
-import { useRef, type ReactNode } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef, useSyncExternalStore, type ReactNode } from 'react';
 
 /**
- * Motion vocabulary for the site.
+ * The motion vocabulary for the site. Three primitives, used everywhere:
  *
- * The archival photographs "develop" — blur and contrast resolving, the way a
- * print comes up in a tray — instead of the generic fade-up-and-slide. Text
- * rises a short distance only. Everything collapses to a plain fade when the
- * visitor prefers reduced motion.
+ *   Develop   photographs come up out of a blur, the way a print appears in a
+ *             developing tray. Deliberately not a slide or a zoom.
+ *   Rise      text lifts a short distance into place.
+ *   Parallax  a slow drift as an element crosses the viewport, small enough to
+ *             read as depth in the paper rather than as a moving slideshow.
+ *
+ * All three reduce to a plain fade when the visitor asks for reduced motion.
  */
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
+
+function subscribeToReducedMotion(onChange: () => void) {
+  const query = window.matchMedia(REDUCED_MOTION);
+  query.addEventListener('change', onChange);
+  return () => query.removeEventListener('change', onChange);
+}
+
+/**
+ * Whether the visitor has asked for reduced motion, in a way that survives
+ * hydration.
+ *
+ * framer-motion's own `useReducedMotion` reads `matchMedia` during render and
+ * never updates afterwards. On a prerendered page that produces a mismatch:
+ * the server has no `matchMedia` and says "no preference", the visitor's very
+ * first client render says "reduce", and React finds different markup than the
+ * HTML it was given. `useSyncExternalStore` is built for exactly this — the
+ * third argument is the value used while hydrating, so the first render always
+ * agrees with the HTML, and React re-renders with the real value immediately
+ * after. Changing the setting mid-visit now takes effect too.
+ *
+ * One consequence to respect when using this: an animation's *finished* state
+ * must not depend on which branch ran, because the branch can change one
+ * commit in. Both branches have to land on the same styles, or the swap would
+ * strand an element part-way through an effect.
+ */
+export function useSettledReducedMotion() {
+  return useSyncExternalStore(
+    subscribeToReducedMotion,
+    () => window.matchMedia(REDUCED_MOTION).matches,
+    /* the prerendered HTML is built as though nobody had a preference */
+    () => false
+  );
+}
 
 export function Develop({
   children,
   delay = 0,
   className,
   style,
+  eager = false,
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
   style?: React.CSSProperties;
+  /**
+   * For content already in the first viewport. Runs on mount rather than on
+   * scroll, and holds opacity at 1 the whole way through. An element sitting
+   * at `opacity: 0` has not painted, so if it is the Largest Contentful Paint
+   * candidate the browser will not record LCP until the fade ends. The blur
+   * and contrast still resolve, and that is where the effect actually lives.
+   */
+  eager?: boolean;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useSettledReducedMotion();
+
+  /*
+   * Opacity, blur and contrast only — never scale. Scale would write to
+   * `transform`, and several of the elements wrapped here carry a static
+   * rotation there that makes them look like pasted-down paper.
+   */
+  const from = {
+    opacity: eager ? 1 : 0,
+    filter: reduce ? 'blur(0px) contrast(1)' : 'blur(9px) contrast(2)',
+  };
+  const to = { opacity: 1, filter: 'blur(0px) contrast(1)' };
+  const transition = { duration: reduce ? 0.4 : 1.15, delay, ease: EASE };
+
+  if (eager) {
+    return (
+      <motion.div
+        className={className}
+        style={style}
+        initial={from}
+        animate={to}
+        transition={transition}
+      >
+        {children}
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
       className={className}
       style={style}
-      /*
-       * Matches the mockup's .dev reveal: opacity and blur only, no scale.
-       * Animating scale would write to `transform` and wipe out the static
-       * rotations F puts on the pasted cards and course plates.
-       */
-      initial={
-        reduce
-          ? { opacity: 0 }
-          : { opacity: 0, filter: 'blur(9px) contrast(2)' }
-      }
-      whileInView={
-        reduce ? { opacity: 1 } : { opacity: 1, filter: 'blur(0px) contrast(1)' }
-      }
+      initial={from}
+      whileInView={to}
       viewport={{ once: true, amount: 0.18 }}
-      transition={{ duration: reduce ? 0.4 : 1.15, delay, ease: EASE }}
+      transition={transition}
     >
       {children}
     </motion.div>
@@ -63,34 +119,27 @@ export function Rise({
   delay = 0,
   y = 22,
   className,
-  as = 'div',
 }: {
   children: ReactNode;
   delay?: number;
   y?: number;
   className?: string;
-  as?: 'div' | 'section' | 'span' | 'li';
 }) {
-  const reduce = useReducedMotion();
-  const Tag = motion[as];
+  const reduce = useSettledReducedMotion();
 
   return (
-    <Tag
+    <motion.div
       className={className}
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y }}
+      initial={{ opacity: 0, y: reduce ? 0 : y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: reduce ? 0.4 : 0.75, delay, ease: EASE }}
     >
       {children}
-    </Tag>
+    </motion.div>
   );
 }
 
-/**
- * Slow vertical drift as the element passes through the viewport. Kept small
- * on purpose — this should read as depth in the paper, not as a slideshow.
- */
 export function Parallax({
   children,
   distance = 60,
@@ -101,7 +150,8 @@ export function Parallax({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
+  const reduce = useSettledReducedMotion();
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
@@ -109,68 +159,11 @@ export function Parallax({
   const y = useTransform(scrollYProgress, [0, 1], [distance, -distance]);
 
   return (
-    <motion.div ref={ref} className={className} style={reduce ? undefined : { y }}>
-      {children}
-    </motion.div>
-  );
-}
-
-/** Parent that staggers its Stagger.Item children into view. */
-export const staggerParent: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.075, delayChildren: 0.05 } },
-};
-
-export function StaggerGroup({
-  children,
-  className,
-  amount = 0.12,
-}: {
-  children: ReactNode;
-  className?: string;
-  amount?: number;
-}) {
-  return (
     <motion.div
+      ref={ref}
       className={className}
-      variants={staggerParent}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount }}
+      style={reduce ? undefined : { y }}
     >
-      {children}
-    </motion.div>
-  );
-}
-
-export function StaggerItem({
-  children,
-  className,
-  style,
-}: {
-  children: ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-}) {
-  const reduce = useReducedMotion();
-
-  const variants: Variants = reduce
-    ? {
-        hidden: { opacity: 0 },
-        show: { opacity: 1, transition: { duration: 0.4 } },
-      }
-    : {
-        hidden: { opacity: 0, y: 26, filter: 'blur(10px) contrast(2)' },
-        show: {
-          opacity: 1,
-          y: 0,
-          filter: 'blur(0px) contrast(1)',
-          transition: { duration: 0.95, ease: EASE },
-        },
-      };
-
-  return (
-    <motion.div className={className} style={style} variants={variants}>
       {children}
     </motion.div>
   );

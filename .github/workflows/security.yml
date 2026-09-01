@@ -1,0 +1,138 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # a weekly run catches advisories published against code nobody touched
+    - cron: '41 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-review:
+    name: Dependency review
+    # only meaningful on a diff — there is nothing to compare on a push
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Review added dependencies
+        uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: moderate
+          comment-summary-in-pr: on-failure
+          # this repository is MIT; anything copyleft needs a conversation first
+          deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0, LGPL-3.0
+
+  audit:
+    name: npm audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # Production first, and hard: anything shipped to a visitor's browser.
+      - name: Audit runtime dependencies
+        run: npm audit --omit=dev --audit-level=low
+
+      # The toolchain never reaches a visitor, so only real severity blocks.
+      - name: Audit the full tree
+        run: npm audit --audit-level=high
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # gitleaks needs the history, not just the tip
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  headers:
+    name: Response headers
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+
+      # The headers in next.config.ts are the whole security posture of this
+      # site. Assert they actually reach the wire rather than trusting the file.
+      - name: Serve and assert the security headers
+        run: |
+          npm start &
+          server=$!
+          trap 'kill $server' EXIT
+
+          for _ in $(seq 1 30); do
+            curl -sSf -o /dev/null http://localhost:3000/en && break
+            sleep 2
+          done
+
+          headers=$(curl -sSI http://localhost:3000/en)
+          echo "$headers"
+
+          fail=0
+          require() {
+            if ! grep -qi "^$1:" <<< "$headers"; then
+              echo "::error::missing response header: $1"
+              fail=1
+            fi
+          }
+          require content-security-policy
+          require strict-transport-security
+          require x-content-type-options
+          require x-frame-options
+          require referrer-policy
+          require permissions-policy
+
+          if grep -qi '^x-powered-by:' <<< "$headers"; then
+            echo "::error::x-powered-by is being advertised"
+            fail=1
+          fi
+
+          exit $fail

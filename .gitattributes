@@ -1,0 +1,16 @@
+# Prettier is configured with endOfLine: "lf". Without this, a Windows
+# checkout gets CRLF working files and `npm run format:check` fails for
+# everyone on Windows while passing in CI.
+* text=auto eol=lf
+
+# Never touch the scans.
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# Keep the lockfile out of diff review and out of merge conflicts nobody
+# should resolve by hand — regenerate it with npm install instead.
+package-lock.json -diff linguist-generated=true

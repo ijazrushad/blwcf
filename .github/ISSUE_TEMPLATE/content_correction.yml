@@ -1,0 +1,52 @@
+name: Historical correction
+description: A date, name, number, unit or translation on the site is wrong.
+labels: [content, needs-source]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This site is a record. Corrections are welcome and are taken seriously —
+        but every change to a fact needs something to stand on.
+
+  - type: input
+    id: where
+    attributes:
+      label: Where on the site
+      placeholder: The hero, the 1972 course card, plate 07 caption
+    validations:
+      required: true
+
+  - type: textarea
+    id: currently
+    attributes:
+      label: What it currently says
+    validations:
+      required: true
+
+  - type: textarea
+    id: correction
+    attributes:
+      label: What it should say
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: >
+        A book and page, a gazette notification, a newspaper issue and date, a
+        photograph caption, or first-hand knowledge — say which.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Which language is affected
+      options:
+        - English
+        - বাংলা
+        - Both
+    validations:
+      required: true
