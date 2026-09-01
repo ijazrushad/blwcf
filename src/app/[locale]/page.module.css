@@ -479,6 +479,11 @@ html[lang='bn'] .mark {
   margin-bottom: 100px;
 }
 
+/* both plates share a row and pin to the top edge */
+.cseGrid {
+  align-items: start;
+}
+
 .sheet {
   background: var(--paper);
   padding: 26px 24px 30px;
@@ -494,14 +499,14 @@ html[lang='bn'] .mark {
 }
 
 .cseIm {
+  position: relative;
   overflow: hidden;
   background: var(--green);
+  width: 100%;
 }
 
 .cseIm img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   filter: grayscale(1) contrast(1.17);
   transition: filter 0.7s;
 }
@@ -620,7 +625,6 @@ html[lang='bn'] .med div span {
 
 .c1 .cseIm {
   grid-column: 1 / 8;
-  aspect-ratio: 16 / 10;
   transform: rotate(-0.8deg);
 }
 
@@ -630,12 +634,10 @@ html[lang='bn'] .med div span {
 
 .c2 .tx {
   grid-column: 1 / 5;
-  padding-top: 66px;
 }
 
 .c2 .cseIm {
   grid-column: 6 / 13;
-  aspect-ratio: 16 / 10;
   transform: rotate(0.7deg);
 }
 
@@ -819,7 +821,16 @@ html[lang='bn'] .footer a {
   }
 
   .c2 .tx {
-    padding-top: 0;
+    order: 1;
+  }
+
+  .cseGrid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .c2 .cseIm {
+    order: 2;
   }
 
   .mark {
@@ -843,14 +854,6 @@ html[lang='bn'] .footer a {
     bottom: 0;
     margin-top: -40px;
     transform: none;
-  }
-
-  /* the mirrored second course would otherwise read out of order */
-  .c2 .cseIm {
-    order: 2;
-  }
-  .c2 .tx {
-    order: 1;
   }
 }
 
