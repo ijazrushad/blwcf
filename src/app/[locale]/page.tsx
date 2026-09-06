@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation';
 import Nav from '@/components/Nav';
 import Archive from '@/components/Archive';
 import CourseArticle from '@/components/CourseArticle';
+import AboutBlock from '@/components/AboutBlock';
 import { Develop, Parallax, Rise } from '@/components/Motion';
 import {
-  about,
   archive,
   brand,
   courses,
@@ -165,31 +165,7 @@ export default async function Page({
         <section id="about" className={s.section}>
           <div className="wrap">
             <SectionHead section={sections.about} locale={l} />
-
-            <div className={`g12 ${s.aboutGrid}`}>
-              <div className={s.aboutYear}>
-                <b>{about.year[l]}</b>
-                <span>{about.yearNote[l]}</span>
-              </div>
-
-              <div className={`${s.aboutSheet} ${s.sheet}`}>
-                <span className="tape" aria-hidden />
-                <div className={s.aboutEyebrow}>{about.eyebrow[l]}</div>
-                {about.body.map((para) => (
-                  <p key={para.en}>{para[l]}</p>
-                ))}
-              </div>
-
-              <ol className={s.aboutGather}>
-                {about.gatherings.map((g) => (
-                  <li key={g.d.en}>
-                    <div className={s.aboutGatherD}>{g.d[l]}</div>
-                    <div className={s.aboutGatherN}>{g.n[l]}</div>
-                    <div className={s.aboutGatherNote}>{g.note[l]}</div>
-                  </li>
-                ))}
-              </ol>
-            </div>
+            <AboutBlock locale={l} />
           </div>
         </section>
 
