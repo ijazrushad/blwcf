@@ -659,6 +659,9 @@ html[lang='bn'] .med div span {
   line-height: 0.84;
   letter-spacing: -0.04em;
   color: var(--red);
+  transition:
+    transform 0.45s var(--ease-out),
+    color 0.45s;
 }
 
 html[lang='bn'] .aboutYear b {
@@ -678,6 +681,7 @@ html[lang='bn'] .aboutYear b {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-soft);
+  transition: color 0.35s;
 }
 
 html[lang='bn'] .aboutYear span {
@@ -690,6 +694,9 @@ html[lang='bn'] .aboutYear span {
 .aboutSheet {
   grid-column: 4 / 10;
   transform: rotate(-0.4deg);
+  transition:
+    transform 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out);
 }
 
 .aboutEyebrow {
@@ -699,6 +706,7 @@ html[lang='bn'] .aboutYear span {
   text-transform: uppercase;
   color: var(--green);
   margin-bottom: 14px;
+  transition: color 0.3s;
 }
 
 html[lang='bn'] .aboutEyebrow {
@@ -734,6 +742,9 @@ html[lang='bn'] .aboutSheet p {
 .aboutGather li {
   padding: 14px 0;
   border-top: 1.5px solid var(--ink);
+  transition:
+    padding-left 0.35s var(--ease-out),
+    background-color 0.35s;
 }
 
 .aboutGather li:last-child {
@@ -746,6 +757,9 @@ html[lang='bn'] .aboutSheet p {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--red);
+  transition:
+    letter-spacing 0.35s var(--ease-out),
+    transform 0.35s var(--ease-out);
 }
 
 html[lang='bn'] .aboutGatherD {
@@ -762,6 +776,7 @@ html[lang='bn'] .aboutGatherD {
   letter-spacing: -0.02em;
   margin-top: 4px;
   line-height: 1.2;
+  transition: color 0.3s;
 }
 
 html[lang='bn'] .aboutGatherN {
@@ -776,11 +791,55 @@ html[lang='bn'] .aboutGatherN {
   font-size: 13px;
   line-height: 1.55;
   color: var(--ink-soft);
+  transition: color 0.3s;
 }
 
 html[lang='bn'] .aboutGatherNote {
   font-size: 14px;
   line-height: 1.7;
+}
+
+@media (hover: hover) {
+  .aboutYear:hover b {
+    transform: translateY(-5px);
+    color: var(--red-dk);
+  }
+
+  .aboutYear:hover span {
+    color: var(--ink);
+  }
+
+  /* keep the pasted-sheet tilt; only lift and deepen the shadow */
+  .aboutSheet:hover {
+    transform: translateY(-4px) rotate(-0.7deg);
+    box-shadow: 0 24px 56px rgba(20, 18, 10, 0.26);
+  }
+
+  .aboutSheet:hover .aboutEyebrow {
+    color: var(--red);
+  }
+
+  .aboutGather li:hover {
+    padding-left: 10px;
+    background-color: color-mix(in srgb, var(--paper) 70%, transparent);
+  }
+
+  .aboutGather li:hover .aboutGatherD {
+    letter-spacing: 0.22em;
+  }
+
+  html[lang='bn'] .aboutGather li:hover .aboutGatherD {
+    letter-spacing: 0;
+    transform: translateX(2px);
+  }
+
+  .aboutGather li:hover .aboutGatherN {
+    color: var(--green);
+  }
+
+  .aboutGather li:hover .aboutGatherNote {
+    color: var(--ink);
+  }
 }
 
 /* ================= verse ================= */
