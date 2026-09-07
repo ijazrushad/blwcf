@@ -641,6 +641,207 @@ html[lang='bn'] .med div span {
   transform: rotate(0.7deg);
 }
 
+/* ================= about ================= */
+.aboutGrid {
+  align-items: start;
+  row-gap: 36px;
+}
+
+.aboutYear {
+  grid-column: 1 / 4;
+  padding-top: 8px;
+}
+
+.aboutYear b {
+  display: block;
+  font-family: var(--font-instrument), serif;
+  font-size: clamp(48px, 7vw, 92px);
+  line-height: 0.84;
+  letter-spacing: -0.04em;
+  color: var(--red);
+  transition:
+    transform 0.45s var(--ease-out),
+    color 0.45s;
+}
+
+html[lang='bn'] .aboutYear b {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 800;
+  line-height: 0.96;
+  font-size: clamp(36px, 5.6vw, 72px);
+}
+
+.aboutYear span {
+  display: block;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1.5px solid var(--ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  transition: color 0.35s;
+}
+
+html[lang='bn'] .aboutYear span {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.aboutSheet {
+  grid-column: 4 / 10;
+  transform: rotate(-0.4deg);
+  transition:
+    transform 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out);
+}
+
+.aboutEyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 14px;
+  transition: color 0.3s;
+}
+
+html[lang='bn'] .aboutEyebrow {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.aboutSheet p {
+  font-size: 15px;
+  line-height: 1.84;
+  color: var(--ink-soft);
+}
+
+.aboutSheet p + p {
+  margin-top: 16px;
+}
+
+html[lang='bn'] .aboutSheet p {
+  font-size: 16px;
+  line-height: 2;
+}
+
+.aboutGather {
+  grid-column: 10 / 13;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-top: 8px;
+}
+
+.aboutGather li {
+  padding: 14px 0;
+  border-top: 1.5px solid var(--ink);
+  transition:
+    padding-left 0.35s var(--ease-out),
+    background-color 0.35s;
+}
+
+.aboutGather li:last-child {
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.aboutGatherD {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+  transition:
+    letter-spacing 0.35s var(--ease-out),
+    transform 0.35s var(--ease-out);
+}
+
+html[lang='bn'] .aboutGatherD {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--red);
+}
+
+.aboutGatherN {
+  font-family: var(--font-instrument), serif;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  margin-top: 4px;
+  line-height: 1.2;
+  transition: color 0.3s;
+}
+
+html[lang='bn'] .aboutGatherN {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.aboutGatherNote {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  transition: color 0.3s;
+}
+
+html[lang='bn'] .aboutGatherNote {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+@media (hover: hover) {
+  .aboutYear:hover b {
+    transform: translateY(-5px);
+    color: var(--red-dk);
+  }
+
+  .aboutYear:hover span {
+    color: var(--ink);
+  }
+
+  /* keep the pasted-sheet tilt; only lift and deepen the shadow */
+  .aboutSheet:hover {
+    transform: translateY(-4px) rotate(-0.7deg);
+    box-shadow: 0 24px 56px rgba(20, 18, 10, 0.26);
+  }
+
+  .aboutSheet:hover .aboutEyebrow {
+    color: var(--red);
+  }
+
+  .aboutGather li:hover {
+    padding-left: 10px;
+    background-color: color-mix(in srgb, var(--paper) 70%, transparent);
+  }
+
+  .aboutGather li:hover .aboutGatherD {
+    letter-spacing: 0.22em;
+  }
+
+  html[lang='bn'] .aboutGather li:hover .aboutGatherD {
+    letter-spacing: 0;
+    transform: translateX(2px);
+  }
+
+  .aboutGather li:hover .aboutGatherN {
+    color: var(--green);
+  }
+
+  .aboutGather li:hover .aboutGatherNote {
+    color: var(--ink);
+  }
+}
+
 /* ================= verse ================= */
 .verse {
   background: var(--ink);
@@ -813,11 +1014,32 @@ html[lang='bn'] .footer a {
   .c1 .tx,
   .c2 .cseIm,
   .c2 .tx,
+  .aboutYear,
+  .aboutSheet,
+  .aboutGather,
   .fa,
   .fb2,
   .fc,
   .fd {
     grid-column: 1 / -1;
+  }
+
+  .aboutSheet {
+    transform: none;
+  }
+
+  .aboutGather {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 24px;
+  }
+
+  .aboutGather li {
+    border-bottom: none;
+  }
+
+  .aboutGather li:nth-child(n + 3) {
+    border-top: 1.5px solid var(--ink);
   }
 
   .c2 .tx {
@@ -863,6 +1085,15 @@ html[lang='bn'] .footer a {
   }
   .cse {
     margin-bottom: 68px;
+  }
+  .aboutGather {
+    grid-template-columns: 1fr;
+  }
+  .aboutGather li:nth-child(n + 3) {
+    border-top: 1.5px solid var(--ink);
+  }
+  .aboutGather li + li {
+    border-top: 1.5px solid var(--ink);
   }
   .verse {
     padding: 84px 0;
