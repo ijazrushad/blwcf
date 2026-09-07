@@ -276,9 +276,9 @@ below is part of the framework or part of the page.
 
 **The domain has to be right.** `siteUrl` in `src/content/site.ts` feeds the
 canonical link, the hreflang set, the sitemap and the social card, and it
-defaults to `https://blwcf.org`. A canonical pointing at a hostname that does
-not answer tells search engines to index nothing, so if the live domain is ever
-anything else, set `NEXT_PUBLIC_SITE_URL` in the Vercel project.
+defaults to `https://blwcf.vercel.app`. A canonical pointing at a hostname that
+does not answer tells search engines to index nothing, so if the live domain is
+ever a custom hostname, set `NEXT_PUBLIC_SITE_URL` in the Vercel project.
 
 | What                                      | Where                                                                                  |
 | ----------------------------------------- | -------------------------------------------------------------------------------------- |
@@ -314,8 +314,8 @@ and verified against each platform's real scraper user-agent.
 
 Three details that make it work, and each of which quietly breaks it if changed:
 
-- **The bare domain works too.** `blwcf.org` answers with a 307 to `/en`, and
-  every scraper follows it, so the common case of pasting the domain with no
+- **The bare domain works too.** `blwcf.vercel.app` answers with a 307 to `/en`,
+  and every scraper follows it, so the common case of pasting the domain with no
   path still previews correctly.
 - **The card is 1200×630 and 98 KB.** WhatsApp only renders a large inline
   preview below roughly 300 KB; above that it falls back to a small thumbnail
