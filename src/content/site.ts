@@ -430,8 +430,8 @@ export const about = {
   eyebrow: { en: 'Foundation', bn: 'ফাউন্ডেশন' },
   year: { en: '1980s', bn: '১৯৮০-এর দশক' },
   yearNote: {
-    en: 'Established mid-decade',
-    bn: 'দশকের মাঝামাঝি প্রতিষ্ঠিত',
+    en: 'Established in the mid-1980s',
+    bn: '১৯৮০-এর দশকের মাঝামাঝি প্রতিষ্ঠিত',
   },
   body: [
     {
