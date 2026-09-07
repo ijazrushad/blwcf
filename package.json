@@ -25,7 +25,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run build"
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run build",
+    "social:assets": "node scripts/build-social-assets.mjs"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",

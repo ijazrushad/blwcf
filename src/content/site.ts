@@ -20,7 +20,7 @@ export type Locale = (typeof locales)[number];
  * is ever anything other than the default below.
  */
 export const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://blwcf.org'
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://blwcf.vercel.app'
 ).replace(/\/$/, '');
 
 /** The locale served at `/`, and the hreflang x-default target. */
