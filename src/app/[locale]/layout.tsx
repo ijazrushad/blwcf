@@ -116,7 +116,7 @@ const page = {
     social:
       'Those Magnificent 61 of ’71 — the officer courses of the Bangladesh Liberation War.',
     cardAlt:
-      'Acting President Syed Nazrul Islam inspecting the guard of honour of the first batch of newly commissioned officers of the Mukti Bahini, Murti, 9 October 1971.',
+      'Those Magnificent 61 of Seventy-One — Acting President Syed Nazrul Islam inspects the guard of honour at Murti, 9 October 1971. Bangladesh Liberation War Courses Foundation.',
   },
   bn: {
     title: 'বাংলাদেশ লিবারেশন ওয়ার কোর্সেস ফাউন্ডেশন',
@@ -125,7 +125,7 @@ const page = {
     social:
       'একাত্তরের সেই ৬১ বীর — মুক্তিযুদ্ধের ১ম ও ২য় বাংলাদেশ ওয়ার কোর্স।',
     cardAlt:
-      'অস্থায়ী রাষ্ট্রপতি সৈয়দ নজরুল ইসলাম মুক্তিবাহিনীর সদ্য কমিশনপ্রাপ্ত প্রথম দলের গার্ড অব অনার পরিদর্শন করছেন। মুর্তি, ৯ অক্টোবর ১৯৭১।',
+      'একাত্তরের সেই ৬১ বীর — অস্থায়ী রাষ্ট্রপতি সৈয়দ নজরুল ইসলাম মুর্তিতে গার্ড অব অনার পরিদর্শন করছেন, ৯ অক্টোবর ১৯৭১। বাংলাদেশ লিবারেশন ওয়ার কোর্সেস ফাউন্ডেশন।',
   },
 } satisfies Record<
   Locale,
@@ -153,13 +153,30 @@ export async function generateMetadata({
   const { locale } = await params;
   const l = locale as Locale;
   const copy = page[l];
+  const pageUrl = `${siteUrl}/${l}`;
+  const cardUrl = `${siteUrl}${socialCard.url}`;
 
   return {
     metadataBase: new URL(siteUrl),
-    title: copy.title,
+    title: {
+      default: copy.title,
+      template: `%s · ${brand.short.en}`,
+    },
     description: copy.description,
     applicationName: brand.short.en,
+    authors: [{ name: brand.full.en, url: siteUrl }],
+    creator: brand.full.en,
     publisher: brand.full[l],
+    category: 'history',
+    keywords: [
+      'Bangladesh Liberation War',
+      'Mukti Bahini',
+      'BLWCF',
+      'Murti',
+      '1st Bangladesh War Course',
+      '2nd Bangladesh War Course',
+      '1971',
+    ],
     alternates: {
       canonical: `/${l}`,
       languages: {
@@ -185,21 +202,48 @@ export async function generateMetadata({
         'max-video-preview': -1,
       },
     },
+    icons: {
+      icon: [
+        { url: '/favicon.ico', sizes: '32x32', type: 'image/png' },
+        { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+      ],
+      apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
+      shortcut: '/favicon.ico',
+    },
     openGraph: {
       type: 'website',
-      url: `${siteUrl}/${l}`,
+      url: pageUrl,
       siteName: brand.full[l],
       locale: l === 'bn' ? 'bn_BD' : 'en_US',
       alternateLocale: l === 'bn' ? 'en_US' : 'bn_BD',
       title: copy.title,
       description: copy.social,
-      images: [{ ...socialCard, alt: copy.cardAlt }],
+      images: [
+        {
+          url: cardUrl,
+          secureUrl: cardUrl,
+          width: socialCard.width,
+          height: socialCard.height,
+          type: socialCard.type,
+          alt: copy.cardAlt,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: copy.title,
       description: copy.social,
-      images: [{ ...socialCard, alt: copy.cardAlt }],
+      images: [
+        {
+          url: cardUrl,
+          width: socialCard.width,
+          height: socialCard.height,
+          alt: copy.cardAlt,
+        },
+      ],
+    },
+    other: {
+      'og:image:alt': copy.cardAlt,
     },
   };
 }

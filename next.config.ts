@@ -90,7 +90,8 @@ const nextConfig: NextConfig = {
          * fetch server-side and ignore CORP, so this only shows up on the
          * platforms that hotlink, which is exactly the case worth covering.
          */
-        source: '/:file(social-card.jpg|logo.png)',
+        source:
+          '/:file(social-card.jpg|logo.png|icon-512.png|apple-icon.png|favicon.ico)',
         headers: [
           {
             key: 'Cross-Origin-Resource-Policy',
