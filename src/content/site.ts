@@ -42,6 +42,7 @@ export type ArchiveItem = {
 export const nav: { href: string; label: Bi }[] = [
   { href: '#archive', label: { en: 'Archive', bn: 'সংগ্রহশালা' } },
   { href: '#courses', label: { en: 'Courses', bn: 'ওয়ার কোর্স' } },
+  { href: '#about', label: { en: 'About', bn: 'আমাদের কথা' } },
 ];
 
 export const brand = {
@@ -385,7 +386,7 @@ export type SectionTitle = {
 };
 
 export const sections: Record<
-  'archive' | 'courses',
+  'archive' | 'courses' | 'about',
   { n: string; kick: Bi; title: SectionTitle; mark: Bi }
 > = {
   archive: {
@@ -409,6 +410,73 @@ export const sections: Record<
     },
     mark: { en: 'দুইটি ওয়ার কোর্স', bn: 'Two war courses' },
   },
+  about: {
+    n: '03',
+    kick: { en: 'the fellowship', bn: 'সৌহার্দ্য' },
+    title: {
+      lead: { en: 'About', bn: 'আমাদের' },
+      italic: { en: 'us', bn: 'কথা' },
+    },
+    mark: { en: 'আমাদের কথা', bn: 'About us' },
+  },
+};
+
+/**
+ * About the Foundation — founding story and the four gatherings that keep it.
+ * Copy lightly edited for clarity from the Foundation's own account; meaning
+ * unchanged. Spelling of place names follows the rest of the site (Murti).
+ */
+export const about = {
+  eyebrow: { en: 'Foundation', bn: 'ফাউন্ডেশন' },
+  year: { en: '1980s', bn: '১৯৮০-এর দশক' },
+  yearNote: {
+    en: 'Established in the mid-1980s',
+    bn: '১৯৮০-এর দশকের মাঝামাঝি প্রতিষ্ঠিত',
+  },
+  body: [
+    {
+      en: 'The officers of these two courses who had left the Army voluntarily, those who were retired prematurely, those who did not continue to serve after returning from Murti, India, and those who were denied commission from Battle School, came together to establish a social platform. Their purpose was to maintain close contact and camaraderie among themselves, while also providing financial support to fellow Foundation members and to the families of deceased members in need. With this objective, they established the Bangladesh Liberation War Courses Foundation (BLWCF) in the mid-1980s. The Foundation has an executive committee elected every two years, and the posts of President and General Secretary rotate between the two courses.',
+      bn: 'এই দুই কোর্সের যেসব অফিসার স্বেচ্ছায় সেনাবাহিনী ত্যাগ করেছিলেন, যাঁরা অকালে অবসর নিয়েছিলেন, মুর্তি থেকে ফিরে সেনাবাহিনীতে চাকরি চালিয়ে যাননি, কিংবা ব্যাটল স্কুল থেকে কমিশন পাননি — তাঁরা একত্র হয়ে একটি সামাজিক মঞ্চ গড়ে তোলেন। উদ্দেশ্য ছিল পারস্পরিক যোগাযোগ ও সৌহার্দ্য অটুট রাখা, এবং প্রয়োজনে ফাউন্ডেশনের সদস্য ও প্রয়াত সদস্যদের পরিবারকে আর্থিক সহায়তা দেওয়া। এই লক্ষ্যে ১৯৮০-এর দশকের মাঝামাঝি বাংলাদেশ লিবারেশন ওয়ার কোর্সেস ফাউন্ডেশন (বিএলডব্লিউসিএফ) প্রতিষ্ঠিত হয়। ফাউন্ডেশনের নির্বাহী কমিটি প্রতি দুই বছর অন্তর নির্বাচিত হয়, এবং সভাপতি ও সাধারণ সম্পাদকের পদ দুই কোর্সের মধ্যে পালাক্রমে বণ্টিত হয়।',
+    },
+    {
+      en: 'Since its inception, Foundation members have gathered regularly four times a year — on Foundation Day, 9 October, the commissioning day of the 1st Bangladesh War Course; on Fellowship Day, 5 August, the commissioning day of the 2nd Bangladesh War Course; on Victory Day; and at the Independence Day dinner, where members of the Foundation and Liberation War veterans attend with their families.',
+      bn: 'প্রতিষ্ঠার পর থেকে ফাউন্ডেশনের সদস্যরা বছরে চারবার নিয়মিত মিলিত হন — ৯ অক্টোবর প্রতিষ্ঠা দিবসে, যা ১ম বাংলাদেশ ওয়ার কোর্সের কমিশন দিবস; ৫ আগস্ট ফেলোশিপ দিবসে, যা ২য় বাংলাদেশ ওয়ার কোর্সের কমিশন দিবস; বিজয় দিবসে; এবং স্বাধীনতা দিবসের নৈশভোজে, যেখানে ফাউন্ডেশনের সদস্য ও মুক্তিযুদ্ধের বীর মুক্তিযোদ্ধারা পরিবারসহ উপস্থিত হন।',
+    },
+  ],
+  gatherings: [
+    {
+      d: { en: '09 October', bn: '৯ অক্টোবর' },
+      n: { en: 'Foundation Day', bn: 'প্রতিষ্ঠা দিবস' },
+      note: {
+        en: 'Commissioning day of the 1st Bangladesh War Course',
+        bn: '১ম বাংলাদেশ ওয়ার কোর্সের কমিশন দিবস',
+      },
+    },
+    {
+      d: { en: '05 August', bn: '৫ আগস্ট' },
+      n: { en: 'Fellowship Day', bn: 'ফেলোশিপ দিবস' },
+      note: {
+        en: 'Commissioning day of the 2nd Bangladesh War Course',
+        bn: '২য় বাংলাদেশ ওয়ার কোর্সের কমিশন দিবস',
+      },
+    },
+    {
+      d: { en: '16 December', bn: '১৬ ডিসেম্বর' },
+      n: { en: 'Victory Day', bn: 'বিজয় দিবস' },
+      note: {
+        en: 'Members gather with their families',
+        bn: 'সদস্যরা পরিবারসহ মিলিত হন',
+      },
+    },
+    {
+      d: { en: '26 March', bn: '২৬ মার্চ' },
+      n: { en: 'Independence Day dinner', bn: 'স্বাধীনতা দিবসের নৈশভোজ' },
+      note: {
+        en: 'With Liberation War veterans and families',
+        bn: 'মুক্তিযোদ্ধা ও পরিবারসহ',
+      },
+    },
+  ],
 };
 
 export const footer = {
@@ -422,6 +490,7 @@ export const footer = {
       links: [
         { href: '#archive', label: { en: 'Archive', bn: 'সংগ্রহশালা' } },
         { href: '#courses', label: { en: 'Courses', bn: 'ওয়ার কোর্স' } },
+        { href: '#about', label: { en: 'About', bn: 'আমাদের কথা' } },
       ],
     },
     {
