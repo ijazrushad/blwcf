@@ -15,7 +15,7 @@ const W = 1200;
 const H = 630;
 
 const photo = path.join(pub, 'archive', 'guard-of-honour.jpg');
-const logo = path.join(pub, 'logo.png');
+const logo = path.join(pub, 'blwcf-logo-2026.png');
 
 /* bone paper + red — matches the site tokens */
 const bg = '#efe9dc';
@@ -70,6 +70,7 @@ async function icons() {
   const sizes = [
     { file: path.join(appDir, 'icon.png'), size: 32 },
     { file: path.join(appDir, 'apple-icon.png'), size: 180 },
+    { file: path.join(pub, 'apple-icon.png'), size: 180 },
     { file: path.join(pub, 'icon-512.png'), size: 512 },
   ];
 
