@@ -39,7 +39,7 @@ function organization(locale: Locale) {
     url: siteUrl,
     logo: {
       '@type': 'ImageObject',
-      url: `${siteUrl}/logo.png`,
+      url: `${siteUrl}/blwcf-logo-2026.png`,
       width: 500,
       height: 500,
     },

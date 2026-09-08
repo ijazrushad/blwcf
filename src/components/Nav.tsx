@@ -13,7 +13,7 @@ export default function Nav({ locale }: { locale: Locale }) {
           {/* the seal is a 500px source rendered at 52px — without `sizes`
               next/image would ship a 640px variant of it on every load */}
           <Image
-            src="/logo.png"
+            src="/blwcf-logo-2026.png"
             alt=""
             width={500}
             height={500}
