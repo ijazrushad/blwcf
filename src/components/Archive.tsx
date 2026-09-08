@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import ArchiveStrip from './ArchiveStrip';
 import { archive, ui, type ArchiveItem, type Locale } from '@/content/site';
@@ -93,22 +93,15 @@ function Lightbox({
   onClose: () => void;
   onIndex: (i: number) => void;
 }) {
-  const [zoom, setZoom] = useState(false);
-  const stage = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const item = archive[index];
 
   const go = useCallback(
     (delta: number) => {
-      setZoom(false);
       onIndex((index + delta + archive.length) % archive.length);
     },
     [index, onIndex]
   );
-
-  useEffect(() => {
-    stage.current?.scrollTo({ top: 0, left: 0 });
-  }, [index, zoom]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -126,12 +119,6 @@ function Lightbox({
       document.body.style.overflow = prev;
     };
   }, [go, onClose]);
-
-  /*
-   * These are low resolution originals, so "zoom" means 100% of native
-   * pixels rather than filling the screen.
-   */
-  const nativeWidth = `min(${item.width}px, 100%)`;
 
   return (
     <motion.div
@@ -154,15 +141,6 @@ function Lightbox({
         </div>
         <div className={s.lbTools}>
           <button
-            className={`${s.lbBtn} ${zoom ? s.active : ''}`}
-            onClick={() => setZoom((z) => !z)}
-            aria-pressed={zoom}
-            aria-label={ui.zoom[locale]}
-            title={ui.zoom[locale]}
-          >
-            {zoom ? '−' : '+'}
-          </button>
-          <button
             className={s.lbBtn}
             onClick={onClose}
             aria-label={ui.close[locale]}
@@ -173,22 +151,17 @@ function Lightbox({
         </div>
       </div>
 
-      <div className={s.lbStage} ref={stage}>
+      <div className={s.lbStage}>
         <AnimatePresence mode="wait">
           <motion.div
             key={item.id}
             className={s.lbImgWrap}
-            drag={zoom ? false : 'x'}
+            drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.18}
             onDragEnd={(_, info) => {
               if (info.offset.x < -70) go(1);
               else if (info.offset.x > 70) go(-1);
-            }}
-            style={{
-              width: zoom ? nativeWidth : `min(${item.width * 1.6}px, 100%)`,
-              maxHeight: zoom ? 'none' : '100%',
-              aspectRatio: `${item.width} / ${item.height}`,
             }}
             initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.985 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -204,10 +177,10 @@ function Lightbox({
             <Image
               src={item.src}
               alt={item.title[locale]}
-              width={item.width}
-              height={item.height}
+              fill
               sizes="100vw"
               quality={95}
+              style={{ objectFit: 'contain', objectPosition: 'center' }}
             />
           </motion.div>
         </AnimatePresence>

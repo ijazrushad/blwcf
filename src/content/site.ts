@@ -42,6 +42,7 @@ export type ArchiveItem = {
 export const nav: { href: string; label: Bi }[] = [
   { href: '#archive', label: { en: 'Archive', bn: 'সংগ্রহশালা' } },
   { href: '#courses', label: { en: 'Courses', bn: 'ওয়ার কোর্স' } },
+  { href: '#commemoration', label: { en: 'Events', bn: 'অনুষ্ঠান' } },
   { href: '#about', label: { en: 'About', bn: 'আমাদের কথা' } },
 ];
 
@@ -386,7 +387,7 @@ export type SectionTitle = {
 };
 
 export const sections: Record<
-  'archive' | 'courses' | 'about',
+  'archive' | 'courses' | 'commemoration' | 'about',
   { n: string; kick: Bi; title: SectionTitle; mark: Bi }
 > = {
   archive: {
@@ -410,8 +411,18 @@ export const sections: Record<
     },
     mark: { en: 'দুইটি ওয়ার কোর্স', bn: 'Two war courses' },
   },
-  about: {
+  commemoration: {
     n: '03',
+    kick: { en: 'fellowship day', bn: 'ফেলোশিপ দিবস' },
+    title: {
+      lead: { en: 'Commissioning Day,', bn: 'কমিশন দিবস,' },
+      italic: { en: 'fifty-four years', bn: 'চুয়ান্ন বছর' },
+      stacked: true,
+    },
+    mark: { en: 'স্মরণ ও সৌহার্দ্য', bn: 'Commemoration' },
+  },
+  about: {
+    n: '04',
     kick: { en: 'the fellowship', bn: 'সৌহার্দ্য' },
     title: {
       lead: { en: 'About', bn: 'আমাদের' },
@@ -419,6 +430,182 @@ export const sections: Record<
     },
     mark: { en: 'আমাদের কথা', bn: 'About us' },
   },
+};
+
+export type CommemorationPhoto = {
+  src: string;
+  width: number;
+  height: number;
+  alt: Bi;
+};
+
+/**
+ * The 54th commissioning-day celebration of the 2nd Bangladesh Liberation
+ * War Course. The commemoration date (2026) and the original commissioning
+ * date (1972) are deliberately kept separate.
+ */
+export const commemoration = {
+  edition: { en: '54th', bn: '৫৪তম' },
+  eventName: {
+    en: '54th Commissioning Day of the 2nd Bangladesh Liberation War Course',
+    bn: '২য় বাংলাদেশ লিবারেশন ওয়ার কোর্সের ৫৪তম কমিশন দিবস',
+  },
+  title: {
+    en: '2nd Bangladesh Liberation War Course',
+    bn: '২য় বাংলাদেশ লিবারেশন ওয়ার কোর্স',
+  },
+  date: { en: '07 August 2026', bn: '৭ আগস্ট ২০২৬' },
+  originalDate: {
+    en: 'Commissioned 05 August 1972',
+    bn: 'কমিশন লাভ ৫ আগস্ট ১৯৭২',
+  },
+  venue: {
+    en: 'Banquet Hall · Kurmitola Golf Club',
+    bn: 'ব্যাংকুয়েট হল · কুর্মিটোলা গলফ ক্লাব',
+  },
+  intro: {
+    en: 'The 54th Commissioning Day of the 2nd Bangladesh Liberation War Course was celebrated on 7 August 2026 at the Banquet Hall of Kurmitola Golf Club.',
+    bn: '২য় বাংলাদেশ লিবারেশন ওয়ার কোর্সের ৫৪তম কমিশন দিবস ২০২৬ সালের ৭ আগস্ট কুর্মিটোলা গলফ ক্লাবের ব্যাংকুয়েট হলে উদ্‌যাপিত হয়।',
+  },
+  attendance: {
+    en: 'Members of the Bangladesh Liberation War Courses Foundation attended with their spouses, alongside the widows of deceased comrades and senior Liberation War veterans with their spouses.',
+    bn: 'বাংলাদেশ লিবারেশন ওয়ার কোর্সেস ফাউন্ডেশনের সদস্যরা তাঁদের জীবনসঙ্গীদের নিয়ে অনুষ্ঠানে যোগ দেন। প্রয়াত সহযোদ্ধাদের বিধবা স্ত্রী এবং জ্যেষ্ঠ মুক্তিযোদ্ধারাও তাঁদের জীবনসঙ্গীদের সঙ্গে উপস্থিত ছিলেন।',
+  },
+  guestLabels: {
+    chief: { en: 'Chief Guest', bn: 'প্রধান অতিথি' },
+    special: { en: 'Special Guest', bn: 'বিশেষ অতিথি' },
+    honour: { en: 'Guests of Honour', bn: 'সম্মানিত অতিথিবৃন্দ' },
+  },
+  chiefGuest: {
+    name: {
+      en: 'Major Hafiz Uddin Ahmad (Retd), BB',
+      bn: 'মেজর হাফিজ উদ্দিন আহমদ (অব.), বীর বিক্রম',
+    },
+    role: {
+      en: "Hon'ble Acting President, People's Republic of Bangladesh",
+      bn: 'মাননীয় ভারপ্রাপ্ত রাষ্ট্রপতি, গণপ্রজাতন্ত্রী বাংলাদেশ',
+    },
+  },
+  specialGuest: {
+    name: {
+      en: 'Advocate Ahmed Azam Khan, MP',
+      bn: 'অ্যাডভোকেট আহমেদ আজম খান, এমপি',
+    },
+    role: {
+      en: 'Minister for Liberation War Affairs',
+      bn: 'মুক্তিযুদ্ধ বিষয়ক মন্ত্রী',
+    },
+  },
+  guestsOfHonour: [
+    {
+      name: { en: 'General Waker-Uz-Zaman', bn: 'জেনারেল ওয়াকার-উজ-জামান' },
+      role: { en: 'Chief of Army Staff', bn: 'সেনাবাহিনী প্রধান' },
+      service: { en: 'Bangladesh Army', bn: 'বাংলাদেশ সেনাবাহিনী' },
+    },
+    {
+      name: {
+        en: 'Vice Admiral Khandaker Misbah Ul Azim',
+        bn: 'ভাইস অ্যাডমিরাল খন্দকার মিসবাহ উল আজিম',
+      },
+      role: { en: 'Chief of Naval Staff', bn: 'নৌবাহিনী প্রধান' },
+      service: { en: 'Bangladesh Navy', bn: 'বাংলাদেশ নৌবাহিনী' },
+    },
+    {
+      name: {
+        en: 'Air Chief Marshal Hasan Mahmood Khan',
+        bn: 'এয়ার চিফ মার্শাল হাসান মাহমুদ খান',
+      },
+      role: { en: 'Chief of Air Staff', bn: 'বিমানবাহিনী প্রধান' },
+      service: { en: 'Bangladesh Air Force', bn: 'বাংলাদেশ বিমানবাহিনী' },
+    },
+  ],
+  galleryLabel: {
+    en: 'Nine photographs · select to enlarge',
+    bn: 'নয়টি আলোকচিত্র · বড় করে দেখতে নির্বাচন করুন',
+  },
+  photos: [
+    {
+      src: '/Commissioning Day celebration programme/WhatsApp Image 2026-09-07 at 5.43.24 PM.jpeg',
+      width: 1600,
+      height: 838,
+      alt: {
+        en: 'Chief guest and distinguished guests seated beneath the Commissioning Day programme backdrop.',
+        bn: 'কমিশন দিবসের অনুষ্ঠানের মঞ্চে প্রধান ও সম্মানিত অতিথিবৃন্দ।',
+      },
+    },
+    {
+      src: '/Commissioning Day celebration programme/WhatsApp Image 2026-09-07 at 5.42.53 PM.jpeg',
+      width: 1600,
+      height: 1066,
+      alt: {
+        en: 'Guests standing before the Bangladesh flag during the programme.',
+        bn: 'অনুষ্ঠানে বাংলাদেশের পতাকার সামনে দাঁড়িয়ে অতিথিবৃন্দ।',
+      },
+    },
+    {
+      src: '/Commissioning Day celebration programme/WhatsApp Image 2026-09-07 at 5.44.04 PM.jpeg',
+      width: 1383,
+      height: 1015,
+      alt: {
+        en: 'A guest addresses the Commissioning Day gathering from the lectern.',
+        bn: 'কমিশন দিবসের সমাবেশে মঞ্চ থেকে বক্তব্য রাখছেন একজন অতিথি।',
+      },
+    },
+    {
+      src: '/Commissioning Day celebration programme/WhatsApp Image 2026-09-07 at 5.44.19 PM.jpeg',
+      width: 1600,
+      height: 1066,
+      alt: {
+        en: 'A speaker addresses the gathering as guests sit across the stage.',
+        bn: 'মঞ্চে অতিথিদের উপস্থিতিতে সমাবেশে বক্তব্য দিচ্ছেন একজন বক্তা।',
+      },
+    },
+    {
+      src: '/Commissioning Day celebration programme/WhatsApp Image 2026-09-07 at 5.45.11 PM.jpeg',
+      width: 1600,
+      height: 1066,
+      alt: {
+        en: 'Address from the lectern during the 54th Commissioning Day programme.',
+        bn: '৫৪তম কমিশন দিবসের অনুষ্ঠানে মঞ্চ থেকে বক্তব্য।',
+      },
+    },
+    {
+      src: '/Commissioning Day celebration programme/WhatsApp Image 2026-09-07 at 5.45.37 PM.jpeg',
+      width: 1600,
+      height: 1066,
+      alt: {
+        en: 'A Liberation War veteran speaks at the celebration.',
+        bn: 'উদ্‌যাপন অনুষ্ঠানে বক্তব্য রাখছেন একজন মুক্তিযোদ্ধা।',
+      },
+    },
+    {
+      src: '/Commissioning Day celebration programme/WhatsApp Image 2026-09-07 at 5.45.55 PM.jpeg',
+      width: 1600,
+      height: 1096,
+      alt: {
+        en: 'A commemorative crest is presented on stage during the celebration.',
+        bn: 'উদ্‌যাপন অনুষ্ঠানে মঞ্চে স্মারক ক্রেস্ট প্রদান।',
+      },
+    },
+    {
+      src: '/Commissioning Day celebration programme/WhatsApp Image 2026-09-07 at 5.46.50 PM.jpeg',
+      width: 1600,
+      height: 1188,
+      alt: {
+        en: 'A Foundation member addresses the audience from the programme stage.',
+        bn: 'অনুষ্ঠানের মঞ্চ থেকে শ্রোতাদের উদ্দেশে বক্তব্য রাখছেন ফাউন্ডেশনের একজন সদস্য।',
+      },
+    },
+    {
+      src: '/Commissioning Day celebration programme/WhatsApp Image 2026-09-07 at 5.47.04 PM.jpeg',
+      width: 1600,
+      height: 1415,
+      alt: {
+        en: 'Closing address during the Commissioning Day celebration.',
+        bn: 'কমিশন দিবস উদ্‌যাপনে সমাপনী বক্তব্য।',
+      },
+    },
+  ] satisfies CommemorationPhoto[],
 };
 
 /**
@@ -490,6 +677,7 @@ export const footer = {
       links: [
         { href: '#archive', label: { en: 'Archive', bn: 'সংগ্রহশালা' } },
         { href: '#courses', label: { en: 'Courses', bn: 'ওয়ার কোর্স' } },
+        { href: '#commemoration', label: { en: 'Events', bn: 'অনুষ্ঠান' } },
         { href: '#about', label: { en: 'About', bn: 'আমাদের কথা' } },
       ],
     },
