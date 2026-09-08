@@ -1,4 +1,12 @@
-import { archive, brand, footer, locales, siteUrl, type Locale } from './site';
+import {
+  archive,
+  brand,
+  commemoration,
+  footer,
+  locales,
+  siteUrl,
+  type Locale,
+} from './site';
 
 /**
  * Schema.org description of the site, emitted as JSON-LD in the document head.
@@ -85,6 +93,31 @@ function collectionPage(locale: Locale, title: string, description: string) {
   };
 }
 
+function commissioningDay(locale: Locale) {
+  return {
+    '@type': 'Event',
+    '@id': `${siteUrl}/${locale}#commissioning-day-2026`,
+    name: commemoration.eventName[locale],
+    description: commemoration.intro[locale],
+    startDate: '2026-08-07',
+    endDate: '2026-08-07',
+    eventStatus: 'https://schema.org/EventCompleted',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    inLanguage: locale,
+    location: {
+      '@type': 'Place',
+      name: commemoration.venue[locale],
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Dhaka',
+        addressCountry: 'BD',
+      },
+    },
+    organizer: { '@id': ORGANIZATION_ID },
+    image: commemoration.photos.map((photo) => `${siteUrl}${photo.src}`),
+  };
+}
+
 export function structuredData(
   locale: Locale,
   page: { title: string; description: string }
@@ -95,6 +128,7 @@ export function structuredData(
       organization(locale),
       website(locale),
       collectionPage(locale, page.title, page.description),
+      commissioningDay(locale),
     ],
   };
 }
