@@ -91,7 +91,7 @@ const nextConfig: NextConfig = {
          * platforms that hotlink, which is exactly the case worth covering.
          */
         source:
-          '/:file(social-card.jpg|logo.png|icon-512.png|apple-icon.png|favicon.ico)',
+          '/:file(social-card.jpg|blwcf-logo-2026.png|icon-512.png|apple-icon.png|favicon.ico)',
         headers: [
           {
             key: 'Cross-Origin-Resource-Policy',
