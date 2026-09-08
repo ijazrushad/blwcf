@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Nav from '@/components/Nav';
 import Archive from '@/components/Archive';
 import CourseArticle from '@/components/CourseArticle';
+import Commemoration from '@/components/Commemoration';
 import AboutBlock from '@/components/AboutBlock';
 import { Develop, Parallax, Rise } from '@/components/Motion';
 import {
@@ -161,7 +162,15 @@ export default async function Page({
           ))}
         </section>
 
-        {/* ================= 03 about ================= */}
+        {/* ================= 03 commemoration ================= */}
+        <section id="commemoration" className={s.section}>
+          <div className="wrap">
+            <SectionHead section={sections.commemoration} locale={l} />
+            <Commemoration locale={l} />
+          </div>
+        </section>
+
+        {/* ================= 04 about ================= */}
         <section id="about" className={s.section}>
           <div className="wrap">
             <SectionHead section={sections.about} locale={l} />

@@ -1,0 +1,714 @@
+.leadGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gutter);
+  align-items: end;
+}
+
+.edition {
+  grid-column: 1 / 4;
+  min-width: 0;
+  padding-bottom: 22px;
+}
+
+.edition b {
+  display: block;
+  font-family: var(--font-instrument), serif;
+  font-size: clamp(86px, 13vw, 184px);
+  font-weight: 400;
+  line-height: 0.7;
+  letter-spacing: -0.055em;
+  color: var(--red);
+  white-space: nowrap;
+}
+
+html[lang='bn'] .edition b {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 800;
+  font-size: clamp(54px, 7.4vw, 98px);
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+}
+
+.edition span {
+  display: block;
+  margin-top: 22px;
+  padding-top: 10px;
+  border-top: 1.5px solid var(--ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .edition span {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.featured {
+  grid-column: 4 / 13;
+  transform: rotate(0.35deg);
+}
+
+.featuredFrame {
+  aspect-ratio: 1600 / 838;
+  overflow: hidden;
+}
+
+.photoButton {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: var(--ink);
+  cursor: zoom-in;
+}
+
+.featured .photoButton {
+  aspect-ratio: 1600 / 838;
+}
+
+.photoButton img {
+  object-fit: contain;
+  transition:
+    transform 0.7s var(--ease-out),
+    filter 0.7s;
+}
+
+.featured .photoButton img {
+  object-fit: cover;
+  filter: saturate(0.72) contrast(1.04);
+}
+
+.inkSweep {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  transform-origin: left center;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.inkRed {
+  background: var(--red);
+}
+
+.inkGreen {
+  background: var(--green);
+  transform-origin: right center;
+}
+
+.scanLine {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(242, 236, 224, 0.72) 34%,
+    rgba(166, 35, 29, 0.82) 52%,
+    transparent 100%
+  );
+  box-shadow: 0 7px 18px rgba(242, 236, 224, 0.2);
+  pointer-events: none;
+}
+
+.photoLabel {
+  padding-top: 11px;
+  margin-top: 11px;
+  border-top: 1.5px solid var(--ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .photoLabel {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.recordGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gutter);
+  margin-top: 76px;
+  align-items: start;
+}
+
+.account {
+  grid-column: 2 / 8;
+  padding: 26px 28px 30px;
+  background: var(--paper);
+  box-shadow: 0 18px 44px rgba(20, 18, 10, 0.16);
+  transform: rotate(-0.35deg);
+}
+
+.accountKick,
+.honourHead {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+html[lang='bn'] .accountKick,
+html[lang='bn'] .honourHead {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.account p {
+  margin-top: 17px;
+  font-size: 15px;
+  line-height: 1.84;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .account p {
+  font-size: 16px;
+  line-height: 2;
+}
+
+.guests {
+  grid-column: 9 / 13;
+  display: grid;
+  gap: 18px;
+}
+
+.guestCard {
+  padding-top: 13px;
+  border-top: 1.5px solid var(--ink);
+}
+
+.guestCard > div {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+.guestCard h3,
+.honourCard h3 {
+  margin-top: 7px;
+  font-family: var(--font-instrument), serif;
+  font-size: 24px;
+  line-height: 1.14;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.guestCard p,
+.honourCard p {
+  margin-top: 5px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .guestCard > div {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+html[lang='bn'] .guestCard h3,
+html[lang='bn'] .honourCard h3 {
+  font-family: var(--font-baloo), sans-serif;
+  font-size: 21px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+html[lang='bn'] .guestCard p,
+html[lang='bn'] .honourCard p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.honourHead {
+  margin-top: 66px;
+  padding-bottom: 11px;
+  border-bottom: 1.5px solid var(--ink);
+  color: var(--green);
+}
+
+.honourGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gutter);
+  margin-top: 18px;
+}
+
+.honourCard {
+  min-height: 172px;
+  padding: 18px 18px 20px;
+  background: var(--bg-2);
+  border-bottom: 4px solid var(--green);
+  transition:
+    transform 0.35s var(--ease-out),
+    box-shadow 0.35s;
+}
+
+.honourCard > span {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--red);
+}
+
+.honourCard small {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+html[lang='bn'] .honourCard small {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.galleryHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 88px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid var(--ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+html[lang='bn'] .galleryHead {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gutter);
+  margin-top: 28px;
+  align-items: start;
+}
+
+.galleryItem {
+  position: relative;
+}
+
+.galleryItem .photoButton {
+  transition:
+    transform 0.5s var(--ease-out),
+    box-shadow 0.5s;
+}
+
+.galleryItem .photoButton img {
+  filter: saturate(0.42) contrast(1.08);
+}
+
+.g1 {
+  grid-column: 1 / 7;
+}
+.g2 {
+  grid-column: 8 / 13;
+  padding-top: 58px;
+}
+.g3 {
+  grid-column: 2 / 6;
+}
+.g4 {
+  grid-column: 7 / 13;
+  padding-top: 24px;
+}
+.g5 {
+  grid-column: 1 / 5;
+  padding-top: 54px;
+}
+.g6 {
+  grid-column: 5 / 10;
+}
+.g7 {
+  grid-column: 10 / 13;
+  padding-top: 88px;
+}
+.g8 {
+  grid-column: 3 / 10;
+  padding-top: 20px;
+}
+
+@media (hover: hover) {
+  .photoButton:hover img {
+    transform: scale(1.025);
+    filter: saturate(0.92) contrast(1.02);
+  }
+
+  .honourCard:hover {
+    transform: translateY(-5px) rotate(-0.3deg);
+    box-shadow: 0 17px 34px rgba(20, 18, 10, 0.15);
+  }
+}
+
+@keyframes scanPass {
+  0%,
+  12% {
+    top: 0;
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.78;
+  }
+  46% {
+    opacity: 0.26;
+  }
+  52%,
+  100% {
+    top: calc(100% - 2px);
+    opacity: 0;
+  }
+}
+
+@keyframes paperBreathe {
+  0%,
+  100% {
+    box-shadow: 0 18px 44px rgba(20, 18, 10, 0.16);
+  }
+  50% {
+    box-shadow: 0 24px 52px rgba(20, 18, 10, 0.23);
+  }
+}
+
+@keyframes inkRule {
+  0%,
+  100% {
+    border-color: var(--ink);
+  }
+  48% {
+    border-color: var(--red);
+  }
+  56% {
+    border-color: var(--green);
+  }
+}
+
+@keyframes cardInk {
+  0%,
+  100% {
+    background-color: var(--bg-2);
+    border-bottom-color: var(--green);
+  }
+  50% {
+    background-color: color-mix(in srgb, var(--bg-2) 94%, var(--paper));
+    border-bottom-color: var(--red);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scanLine {
+    animation: scanPass 7s var(--ease-out) 1.8s infinite;
+  }
+
+  .account {
+    animation: paperBreathe 8s ease-in-out infinite;
+  }
+
+  .guestCard {
+    animation: inkRule 10s ease-in-out infinite;
+  }
+
+  .guests > div:nth-child(2) .guestCard {
+    animation-delay: -5s;
+  }
+
+  .honourCard {
+    animation: cardInk 9s ease-in-out infinite;
+  }
+
+  .honourGrid > div:nth-child(2) .honourCard {
+    animation-delay: -3s;
+  }
+
+  .honourGrid > div:nth-child(3) .honourCard {
+    animation-delay: -6s;
+  }
+}
+
+/* Lightbox */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: flex;
+  flex-direction: column;
+  padding: max(14px, env(safe-area-inset-top)) 14px
+    max(14px, env(safe-area-inset-bottom));
+  background: rgba(9, 9, 7, 0.95);
+}
+
+.lbBar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 0 0 auto;
+  padding: 4px 4px 12px;
+}
+
+.lbTitle {
+  min-width: 0;
+}
+
+.lbTitle b {
+  display: block;
+  font-family: var(--font-instrument), serif;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #f2ece0;
+}
+
+.lbTitle span {
+  display: block;
+  max-width: 72ch;
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8e8a7b;
+}
+
+html[lang='bn'] .lbTitle b {
+  font-family: var(--font-baloo), sans-serif;
+  font-weight: 700;
+}
+
+html[lang='bn'] .lbTitle span {
+  font-family: var(--font-hind), sans-serif;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.lbTools {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.lbButton {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ded8c8;
+  background: transparent;
+}
+
+.lbButton:hover {
+  border-color: var(--red);
+  background: var(--red);
+  color: #fff;
+}
+
+.lbStage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+.lbImage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  user-select: none;
+}
+
+.lbImage img {
+  object-fit: contain;
+  background: #14140f;
+  pointer-events: none;
+}
+
+.lbNav {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  width: 46px;
+  height: 68px;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.45);
+  color: #e6e0d0;
+  font-size: 24px;
+}
+
+.lbNav:hover {
+  background: var(--red);
+}
+
+.lbPrev {
+  left: 0;
+}
+
+.lbNext {
+  right: 0;
+}
+
+.lbCount {
+  flex: 0 0 auto;
+  padding-top: 10px;
+  text-align: center;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: #7d7a6c;
+}
+
+@media (max-width: 980px) {
+  .leadGrid,
+  .recordGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .edition,
+  .featured,
+  .account,
+  .guests {
+    grid-column: 1;
+  }
+
+  html[lang='bn'] .edition b {
+    font-size: clamp(62px, 16vw, 110px);
+  }
+
+  .featured {
+    transform: none;
+  }
+
+  .recordGrid {
+    margin-top: 56px;
+  }
+
+  .account {
+    transform: none;
+  }
+
+  .guests {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .g1,
+  .g2,
+  .g3,
+  .g4,
+  .g5,
+  .g6,
+  .g7,
+  .g8 {
+    grid-column: auto;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .edition {
+    padding-bottom: 8px;
+  }
+
+  .recordGrid {
+    margin-top: 44px;
+  }
+
+  .account {
+    padding: 22px 20px 26px;
+  }
+
+  .guests,
+  .honourGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .honourHead,
+  .galleryHead {
+    margin-top: 52px;
+  }
+
+  .honourCard {
+    min-height: 0;
+  }
+
+  .galleryHead {
+    align-items: flex-end;
+  }
+
+  .galleryHead span:last-child {
+    display: none;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .lbTitle b {
+    font-size: 15px;
+  }
+
+  .lbTitle span {
+    max-width: 42vw;
+  }
+
+  .lbButton {
+    width: 36px;
+    height: 36px;
+  }
+
+  .lbNav {
+    width: 38px;
+    height: 56px;
+  }
+}

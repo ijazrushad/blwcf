@@ -131,9 +131,6 @@ function CourseImageLightbox({
   locale: Locale;
   onClose: () => void;
 }) {
-  const [zoom, setZoom] = useState(false);
-  const nativeWidth = `min(${course.image.width}px, 100%)`;
-
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -171,16 +168,6 @@ function CourseImageLightbox({
         <div className={m.lbTools}>
           <button
             type="button"
-            className={`${m.lbBtn} ${zoom ? m.lbBtnActive : ''}`}
-            onClick={() => setZoom((z) => !z)}
-            aria-pressed={zoom}
-            aria-label={ui.zoom[locale]}
-            title={ui.zoom[locale]}
-          >
-            {zoom ? '−' : '+'}
-          </button>
-          <button
-            type="button"
             className={m.lbBtn}
             onClick={onClose}
             aria-label={ui.close[locale]}
@@ -192,24 +179,15 @@ function CourseImageLightbox({
       </div>
 
       <div className={m.lbStage}>
-        <div
-          className={m.lbImgWrap}
-          style={{
-            width: zoom
-              ? nativeWidth
-              : `min(${course.image.width * 1.6}px, 100%)`,
-            maxHeight: zoom ? 'none' : '100%',
-            aspectRatio: `${course.image.width} / ${course.image.height}`,
-          }}
-        >
+        <div className={m.lbImgWrap}>
           <Image
             src={course.image.src}
             alt={course.title[locale]}
-            width={course.image.width}
-            height={course.image.height}
+            fill
             sizes="100vw"
             quality={100}
             priority
+            style={{ objectFit: 'contain', objectPosition: 'center' }}
           />
         </div>
       </div>
