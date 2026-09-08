@@ -1,15 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useInView } from 'framer-motion';
 import {
   commemoration,
   ui,
   type CommemorationPhoto,
   type Locale,
 } from '@/content/site';
-import { Develop, Rise, useSettledReducedMotion } from '@/components/Motion';
+import { Rise, useSettledReducedMotion } from '@/components/Motion';
 import s from './Commemoration.module.css';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -176,48 +176,7 @@ export default function Commemoration({ locale }: { locale: Locale }) {
         <span>{commemoration.galleryLabel[locale]}</span>
         <span aria-hidden>07.08.2026</span>
       </div>
-      <div className={s.gallery}>
-        {commemoration.photos.slice(1).map((photo, i) => (
-          <Develop
-            key={photo.src}
-            className={`${s.galleryItem} ${s[`g${i + 1}`]}`}
-            delay={Math.min(i * 0.05, 0.25)}
-          >
-            <motion.button
-              type="button"
-              className={s.photoButton}
-              onClick={() => setOpen(i + 1)}
-              aria-label={`${ui.enlargeImage[locale]}: ${photo.alt[locale]}`}
-              style={{ aspectRatio: `${photo.width} / ${photo.height}` }}
-              animate={
-                reduce
-                  ? undefined
-                  : {
-                      y: [0, i % 2 === 0 ? -4 : 3, 0],
-                      rotate: [0, i % 2 === 0 ? -0.35 : 0.35, 0],
-                    }
-              }
-              transition={{
-                duration: 7.5 + (i % 4) * 1.2,
-                delay: -(i * 0.85),
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-              whileHover={
-                reduce ? undefined : { y: -7, rotate: 0, scale: 1.012 }
-              }
-            >
-              <Image
-                src={photo.src}
-                alt={photo.alt[locale]}
-                fill
-                sizes="(max-width: 700px) 92vw, (max-width: 980px) 46vw, 31vw"
-                quality={88}
-              />
-            </motion.button>
-          </Develop>
-        ))}
-      </div>
+      <PhotoScrollStack locale={locale} onOpen={setOpen} />
 
       <AnimatePresence>
         {open !== null && (
@@ -230,6 +189,145 @@ export default function Commemoration({ locale }: { locale: Locale }) {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function PhotoScrollStack({
+  locale,
+  onOpen,
+}: {
+  locale: Locale;
+  onOpen: (index: number) => void;
+}) {
+  const container = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const reduce = useSettledReducedMotion();
+  const photos = commemoration.photos.slice(1);
+  const visible = useInView(container, { amount: 0.35 });
+
+  useEffect(() => {
+    if (reduce || paused || !visible) return;
+    const timer = window.setInterval(
+      () => setActive((current) => (current + 1) % photos.length),
+      4200
+    );
+    return () => window.clearInterval(timer);
+  }, [paused, photos.length, reduce, visible]);
+
+  return (
+    <div
+      className={s.scrollStack}
+      ref={container}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+    >
+      {photos.map((photo, index) => (
+        <StackCard
+          key={photo.src}
+          photo={photo}
+          index={index}
+          total={photos.length}
+          active={active}
+          locale={locale}
+          reduce={reduce}
+          onOpen={() => onOpen(index + 1)}
+          onSelect={() => setActive(index)}
+        />
+      ))}
+      <div className={s.stackProgress}>
+        {photos.map((photo, index) => (
+          <button
+            key={photo.src}
+            type="button"
+            className={index === active ? s.stackProgressActive : ''}
+            onClick={() => setActive(index)}
+            aria-label={photo.alt[locale]}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StackCard({
+  photo,
+  index,
+  total,
+  active,
+  locale,
+  reduce,
+  onOpen,
+  onSelect,
+}: {
+  photo: CommemorationPhoto;
+  index: number;
+  total: number;
+  active: number;
+  locale: Locale;
+  reduce: boolean;
+  onOpen: () => void;
+  onSelect: () => void;
+}) {
+  const forward = (index - active + total) % total;
+  const previousDepth = total - forward;
+  const isActive = forward === 0;
+  const isUpcoming = forward > 0 && forward <= 2;
+  const y = isActive
+    ? '0%'
+    : isUpcoming
+      ? `calc(${96 + forward * 5}% + var(--stack-preview-offset, 0%))`
+      : `${-Math.min(previousDepth * 9, 42)}px`;
+  const scale = isActive
+    ? 1
+    : isUpcoming
+      ? 0.985 - forward * 0.008
+      : 1 - Math.min(previousDepth * 0.014, 0.075);
+  const opacity = isActive || isUpcoming || previousDepth <= 4 ? 1 : 0;
+  const zIndex = isActive
+    ? total + 2
+    : isUpcoming
+      ? total - forward
+      : total - previousDepth;
+
+  return (
+    <div className={s.stackSlot} style={{ zIndex }}>
+      <motion.button
+        type="button"
+        className={`${s.stackCard} ${isActive ? s.stackCardActive : ''}`}
+        onClick={isActive ? onOpen : onSelect}
+        aria-label={
+          isActive
+            ? `${ui.enlargeImage[locale]}: ${photo.alt[locale]}`
+            : photo.alt[locale]
+        }
+        initial={false}
+        animate={{
+          y: reduce ? 0 : y,
+          scale: reduce ? 1 : scale,
+          opacity,
+          rotate: reduce ? 0 : isActive ? 0 : index % 2 === 0 ? -0.35 : 0.35,
+          filter:
+            reduce || !isUpcoming
+              ? 'blur(0px) saturate(1)'
+              : 'blur(9px) saturate(0.55)',
+        }}
+        transition={{ duration: reduce ? 0.2 : 0.82, ease: EASE }}
+      >
+        <div className={s.stackImage}>
+          <Image
+            src={photo.src}
+            alt={photo.alt[locale]}
+            fill
+            sizes="(max-width: 700px) 94vw, (max-width: 1100px) 86vw, 920px"
+            quality={92}
+            style={{ objectFit: 'contain', objectPosition: 'center' }}
+          />
+        </div>
+      </motion.button>
+    </div>
   );
 }
 
