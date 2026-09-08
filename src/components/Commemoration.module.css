@@ -316,56 +316,87 @@ html[lang='bn'] .galleryHead {
   text-transform: none;
 }
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: var(--gutter);
-  margin-top: 28px;
-  align-items: start;
-}
-
-.galleryItem {
+.scrollStack {
   position: relative;
+  height: min(78vh, 760px);
+  min-height: 580px;
+  margin-top: 28px;
+  overflow: hidden;
 }
 
-.galleryItem .photoButton {
+.stackSlot {
+  position: absolute;
+  inset: 48px 0 50px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.stackCard {
+  width: min(920px, 86vw);
+  padding: 11px;
+  border: 0;
+  background: var(--paper);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow:
+    0 22px 58px rgba(20, 18, 10, 0.24),
+    0 2px 0 rgba(255, 255, 255, 0.45) inset;
+  transform-origin: top center;
+  pointer-events: auto;
   transition:
-    transform 0.5s var(--ease-out),
-    box-shadow 0.5s;
+    box-shadow 0.45s var(--ease-out),
+    filter 0.45s;
 }
 
-.galleryItem .photoButton img {
-  filter: saturate(0.42) contrast(1.08);
+.stackCardActive {
+  cursor: zoom-in;
 }
 
-.g1 {
-  grid-column: 1 / 7;
+.stackImage {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #11110d;
+  cursor: inherit;
 }
-.g2 {
-  grid-column: 8 / 13;
-  padding-top: 58px;
+
+.stackImage img {
+  transition:
+    transform 0.65s var(--ease-out),
+    filter 0.55s;
 }
-.g3 {
-  grid-column: 2 / 6;
+
+.stackProgress {
+  position: absolute;
+  z-index: 30;
+  right: 0;
+  bottom: 16px;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }
-.g4 {
-  grid-column: 7 / 13;
-  padding-top: 24px;
+
+.stackProgress button {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  transition:
+    transform 0.3s,
+    background 0.3s;
 }
-.g5 {
-  grid-column: 1 / 5;
-  padding-top: 54px;
-}
-.g6 {
-  grid-column: 5 / 10;
-}
-.g7 {
-  grid-column: 10 / 13;
-  padding-top: 88px;
-}
-.g8 {
-  grid-column: 3 / 10;
-  padding-top: 20px;
+
+.stackProgress button:hover,
+.stackProgressActive {
+  background: var(--red) !important;
+  transform: scale(1.35);
 }
 
 @media (hover: hover) {
@@ -377,6 +408,17 @@ html[lang='bn'] .galleryHead {
   .honourCard:hover {
     transform: translateY(-5px) rotate(-0.3deg);
     box-shadow: 0 17px 34px rgba(20, 18, 10, 0.15);
+  }
+
+  .stackCard:hover {
+    box-shadow:
+      0 28px 68px rgba(20, 18, 10, 0.32),
+      0 2px 0 rgba(255, 255, 255, 0.5) inset;
+  }
+
+  .stackImage:hover img {
+    transform: scale(1.012);
+    filter: saturate(1.06) contrast(1.02);
   }
 }
 
@@ -638,20 +680,8 @@ html[lang='bn'] .lbTitle span {
     grid-template-columns: 1fr 1fr;
   }
 
-  .gallery {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .g1,
-  .g2,
-  .g3,
-  .g4,
-  .g5,
-  .g6,
-  .g7,
-  .g8 {
-    grid-column: auto;
-    padding-top: 0;
+  .stackCard {
+    width: min(920px, 92vw);
   }
 }
 
@@ -690,8 +720,24 @@ html[lang='bn'] .lbTitle span {
     display: none;
   }
 
-  .gallery {
-    grid-template-columns: 1fr;
+  .scrollStack {
+    --stack-preview-offset: 0%;
+
+    height: clamp(330px, calc(94.5vw + 26px), 700px);
+    min-height: 0;
+  }
+
+  .stackSlot {
+    inset: 38px 0 44px;
+  }
+
+  .stackCard {
+    width: calc(100vw - 32px);
+    padding: 7px;
+  }
+
+  .stackImage {
+    aspect-ratio: 4 / 3;
   }
 
   .lbTitle b {
