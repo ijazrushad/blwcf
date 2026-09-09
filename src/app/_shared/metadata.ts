@@ -94,13 +94,25 @@ export function buildMetadata(l: Locale): Metadata {
         'max-video-preview': -1,
       },
     },
+    /*
+     * The tab icon is NOT declared here. It comes from src/app/favicon.ico,
+     * which Next emits by convention as image/x-icon on a hashed URL.
+     *
+     * Declaring it here as well is what broke the favicon. `public/` is served
+     * ahead of the generated routes, so the copies that used to sit there
+     * shadowed the real ones — and public/favicon.ico was a PNG carrying an
+     * .ico extension, which is why browsers fell back to a blank page icon
+     * instead of showing the seal. Those copies are deleted; do not restore
+     * them. The old entry here also typed favicon.ico as image/png.
+     *
+     * `apple` does have to stay. Setting `icons` at all suppresses the
+     * apple-icon.png convention link, and iOS probes /apple-touch-icon.png
+     * rather than the /apple-icon.png this project generates — so without the
+     * line below the home-screen icon is simply never found.
+     */
     icons: {
-      icon: [
-        { url: '/favicon.ico', sizes: '32x32', type: 'image/png' },
-        { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
-      ],
+      icon: [{ url: '/icon-512.png', sizes: '512x512', type: 'image/png' }],
       apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
-      shortcut: '/favicon.ico',
     },
     openGraph: {
       type: 'website',
