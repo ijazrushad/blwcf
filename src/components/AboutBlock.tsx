@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Develop, Rise, useSettledReducedMotion } from '@/components/Motion';
 import { about, type Locale } from '@/content/site';
-import s from '@/app/[locale]/page.module.css';
+import s from '@/styles/page.module.css';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 

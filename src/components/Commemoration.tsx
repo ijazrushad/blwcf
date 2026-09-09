@@ -19,6 +19,16 @@ export default function Commemoration({ locale }: { locale: Locale }) {
   const reduce = useSettledReducedMotion();
   const featured = commemoration.photos[0];
 
+  /*
+   * The featured plate breathes on a twelve-second loop that never ends. The
+   * stack below it already stops itself when it scrolls away; this one did not,
+   * so it went on compositing for the whole visit. Both keyframe tracks start
+   * and end at rest, so dropping to the resting state off-screen is invisible.
+   */
+  const featuredRef = useRef<HTMLDivElement>(null);
+  const featuredOnScreen = useInView(featuredRef);
+  const drifting = !reduce && featuredOnScreen;
+
   return (
     <>
       <div className={s.leadGrid}>
@@ -38,7 +48,7 @@ export default function Commemoration({ locale }: { locale: Locale }) {
           <span>{commemoration.originalDate[locale]}</span>
         </Rise>
 
-        <div className={s.featured}>
+        <div className={s.featured} ref={featuredRef}>
           <motion.div
             className={s.featuredFrame}
             initial={
@@ -60,19 +70,19 @@ export default function Commemoration({ locale }: { locale: Locale }) {
               onClick={() => setOpen(0)}
               aria-label={`${ui.enlargeImage[locale]}: ${featured.alt[locale]}`}
               animate={
-                reduce
-                  ? undefined
-                  : {
+                drifting
+                  ? {
                       scale: [1, 1.008, 1.003, 1],
                       x: [0, 2, -1, 0],
                       y: [0, -2, 1, 0],
                     }
+                  : { scale: 1, x: 0, y: 0 }
               }
-              transition={{
-                duration: 12,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
+              transition={
+                drifting
+                  ? { duration: 12, repeat: Infinity, ease: 'easeInOut' }
+                  : { duration: 0.4, ease: EASE }
+              }
               whileHover={reduce ? undefined : { scale: 1.014 }}
             >
               <Image

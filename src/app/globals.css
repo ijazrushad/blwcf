@@ -172,8 +172,117 @@ button {
 }
 
 /* ============================================================
-   Motion: everything below collapses to a plain fade when the
-   visitor asks for reduced motion.
+   Motion, in CSS.
+
+   The framer-motion vocabulary in components/Motion.tsx covers the
+   elements that need to coordinate with React state. Everything
+   that only has to move when it arrives on screen is done here
+   instead, because a keyframe costs no JavaScript: these rules add
+   motion to the hero, the dates band, the figures, the plates and
+   the verse without a single byte on top of the bundle.
+
+   Two mechanisms, matching the two situations:
+
+   Arrival    the hero is in the first viewport, so it simply plays
+              on load with a stagger. No trigger is needed.
+   Scroll     everything below the fold is driven by
+              `animation-timeline: view()`, which hands the
+              animation's progress to the scroll position and runs
+              entirely off the main thread. It is wrapped in
+              @supports: where it is missing the element just
+              renders in its final state, which is the correct
+              baseline rather than a broken one.
+
+   `blwcf-settle` exists alongside `blwcf-rise` for one reason. An
+   element at `opacity: 0` has not painted, so if it is the Largest
+   Contentful Paint candidate the browser will not record LCP until
+   the fade ends. The hero's masked word is the largest text on the
+   page and very likely that candidate, so it moves without ever
+   being transparent. Same note as Develop's `eager` prop.
+   ============================================================ */
+
+/*
+ * These move the element with the independent `translate` property rather than
+ * writing `transform`, and that is deliberate. Several elements on this page
+ * carry a static rotation in `transform` — the hero's plate note is pasted down
+ * at -1.2deg, the tape at -2.4deg — and a keyframe ending in `transform: none`
+ * replaces that rotation instead of adding to it, leaving the paper sitting
+ * perfectly square for the rest of the visit. `translate` composes with
+ * `transform` instead of overwriting it, so the tilt survives the animation.
+ * Motion.tsx avoids the same trap by never animating scale.
+ */
+@keyframes blwcf-rise {
+  from {
+    opacity: 0;
+    translate: 0 var(--rise-from, 18px);
+  }
+  to {
+    opacity: 1;
+    translate: none;
+  }
+}
+
+/* movement only — never touches opacity, so the element paints at once */
+@keyframes blwcf-settle {
+  from {
+    translate: 0 var(--rise-from, 18px);
+  }
+  to {
+    translate: none;
+  }
+}
+
+/* the print coming up in the developing tray, as a keyframe */
+@keyframes blwcf-develop {
+  from {
+    opacity: 0;
+    filter: blur(9px) contrast(2);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0) contrast(1);
+  }
+}
+
+/* ---- arrival: plays once, on load ---- */
+.rise-in {
+  animation: blwcf-rise 0.8s var(--ease-out) both;
+  animation-delay: var(--rise-delay, 0s);
+}
+
+.settle-in {
+  animation: blwcf-settle 0.9s var(--ease-out) both;
+  animation-delay: var(--rise-delay, 0s);
+}
+
+/* ---- scroll: progress follows the element across the viewport ---- */
+/*
+ * Both endpoints of every range below name the same phase, `cover`, and that
+ * is not cosmetic. Mixing phases — `entry 4% cover 30%` — reads sensibly but
+ * silently inverts on any element taller than the viewport: `entry` stretches
+ * with the element, so its 4% mark can fall *after* the 30% mark of `cover`,
+ * the range runs backwards, progress clamps at zero, and the element sits at
+ * `opacity: 0` forever. The archive plates are 493px and 1017px tall and did
+ * exactly that. `cover` is measured the same way whatever the element's
+ * height, so a range expressed entirely within it always runs forwards.
+ */
+@supports (animation-timeline: view()) {
+  .rise-on-scroll {
+    animation: blwcf-rise linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 22%;
+  }
+
+  .develop-on-scroll {
+    animation: blwcf-develop linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 28%;
+  }
+}
+
+/* ============================================================
+   Motion: everything above and below collapses to a plain fade
+   when the visitor asks for reduced motion.
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -186,5 +295,15 @@ button {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+
+  /*
+   * A scroll-driven animation takes its progress from the timeline and
+   * ignores animation-duration entirely, so the reset above does not reach
+   * it. Detaching the timeline is what actually stops these.
+   */
+  .rise-on-scroll,
+  .develop-on-scroll {
+    animation-timeline: auto !important;
   }
 }

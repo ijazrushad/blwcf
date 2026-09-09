@@ -40,9 +40,15 @@ export default function Archive({ locale }: { locale: Locale }) {
     <>
       <div className={`g12 ${s.grid}`}>
         {shown.map((item, i) => (
+          /*
+           * develop-on-scroll is the CSS twin of the Develop primitive: the
+           * plate comes up out of a blur the way a print appears in the tray.
+           * These four were the only images on the page arriving with no
+           * motion at all, and doing it in CSS keeps them off the main thread.
+           */
           <figure
             key={item.id}
-            className={`${s.plate} ${s[SLOTS[i]]}`}
+            className={`${s.plate} ${s[SLOTS[i]]} develop-on-scroll`}
             onClick={() => setOpen(indexOf(item))}
           >
             <div

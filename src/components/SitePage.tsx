@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
 import Nav from '@/components/Nav';
 import Archive from '@/components/Archive';
 import CourseArticle from '@/components/CourseArticle';
@@ -14,22 +13,23 @@ import {
   figures,
   footer,
   hero,
-  locales,
   sections,
   verse,
   type Locale,
 } from '@/content/site';
-import s from './page.module.css';
+import s from '@/styles/page.module.css';
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale: raw } = await params;
-  if (!locales.includes(raw as Locale)) notFound();
-  const l = raw as Locale;
+/** Stagger for the hero's on-load arrival; see the motion block in globals.css. */
+function delay(value: string) {
+  return { '--rise-delay': value } as React.CSSProperties;
+}
 
+/**
+ * The page itself, in the order it renders. Both `/en` and `/bn` are thin
+ * route files around this one component — they differ only in which locale
+ * they pass and which fonts their layout preloads.
+ */
+export default function SitePage({ locale: l }: { locale: Locale }) {
   const bleed = archive.find((a) => a.id === 'guard-of-honour')!;
 
   return (
@@ -48,17 +48,30 @@ export default async function Page({
             </Parallax>
           </div>
 
+          {/*
+           * The hero is in the first viewport, so it plays on load rather than
+           * on scroll, staggered down the column. `--rise-delay` is read by the
+           * .rise-in / .settle-in rules in globals.css.
+           *
+           * The masked word uses .settle-in, not .rise-in: it is the largest
+           * text on the page and therefore the likeliest LCP candidate, and an
+           * element that starts at opacity 0 does not paint — which would hold
+           * LCP open until the fade finished. It moves without fading.
+           */}
           <div className={`wrap ${s.heroWrap}`}>
             <div className="g12">
-              <div className={s.motto}>{brand.motto[l]}</div>
+              <div className={`${s.motto} rise-in`} style={delay('0.05s')}>
+                {brand.motto[l]}
+              </div>
 
               <div
-                className={`${s.masked} ${l === 'bn' ? s.maskedBn : s.maskedEn}`}
+                className={`${s.masked} ${l === 'bn' ? s.maskedBn : s.maskedEn} settle-in`}
+                style={delay('0.1s')}
               >
                 {hero.masked[l]}
               </div>
 
-              <div className={s.htitle}>
+              <div className={`${s.htitle} rise-in`} style={delay('0.22s')}>
                 <h1 className={s.h1}>
                   {hero.titleBefore[l]}{' '}
                   <span className={s.n}>{hero.titleNumber[l]}</span>{' '}
@@ -66,7 +79,7 @@ export default async function Page({
                 </h1>
               </div>
 
-              <div className={s.hmeta}>
+              <div className={`${s.hmeta} rise-in`} style={delay('0.32s')}>
                 {hero.meta.map((m) => (
                   <span key={m.k.en}>
                     <b>{m.k[l]}</b> · {m.v[l]}
@@ -75,7 +88,9 @@ export default async function Page({
                 ))}
               </div>
 
-              <p className={s.hsub}>{hero.lead[l]}</p>
+              <p className={`${s.hsub} rise-in`} style={delay('0.4s')}>
+                {hero.lead[l]}
+              </p>
             </div>
 
             <div className={s.bleedL}>
@@ -92,7 +107,7 @@ export default async function Page({
                 />
               </Develop>
 
-              <div className={s.note}>
+              <div className={`${s.note} rise-in`} style={delay('0.5s')}>
                 <span className="tape" aria-hidden />
                 <div className={s.noteKick}>{hero.plate.label[l]}</div>
                 <p>{hero.plate.body[l]}</p>
@@ -106,7 +121,7 @@ export default async function Page({
         <div className={s.dates} id="dates">
           <div className={`wrap ${s.datesInner}`}>
             {dates.map((d) => (
-              <div key={d.d.en} className={s.dt}>
+              <div key={d.d.en} className={`${s.dt} rise-on-scroll`}>
                 <b>{d.d[l]}</b>
                 <span>{d.n[l]}</span>
               </div>
@@ -126,19 +141,21 @@ export default async function Page({
         <section className={s.section}>
           <div className="wrap">
             <div className={`g12 ${s.figGrid}`}>
-              <div className={`${s.fig} ${s.f1}`}>
+              <div className={`${s.fig} ${s.f1} rise-on-scroll`}>
                 <b>{figures.a.n[l]}</b>
                 <div className={s.lb}>{figures.a.l[l]}</div>
               </div>
 
-              <div className={s.figtxt}>{figures.text[l]}</div>
+              <div className={`${s.figtxt} rise-on-scroll`}>
+                {figures.text[l]}
+              </div>
 
-              <div className={`${s.fig} ${s.f2}`}>
+              <div className={`${s.fig} ${s.f2} rise-on-scroll`}>
                 <b>{figures.b.n[l]}</b>
                 <div className={s.lb}>{figures.b.l[l]}</div>
               </div>
 
-              <div className={`${s.fig} ${s.f3}`}>
+              <div className={`${s.fig} ${s.f3} rise-on-scroll`}>
                 <b>{figures.c.n[l]}</b>
                 <div className={s.lb}>{figures.c.l[l]}</div>
               </div>
@@ -193,7 +210,7 @@ export default async function Page({
           </div>
           <div className={`wrap ${s.verseWrap}`}>
             {/* the verse is never translated away — it stays in Bengali in both languages */}
-            <p className={s.bnq} lang="bn">
+            <p className={`${s.bnq} rise-on-scroll`} lang="bn">
               {verse.lines.map((line, i) => (
                 <span key={i}>
                   {line}
