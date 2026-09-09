@@ -320,6 +320,31 @@ html[lang='bn'] .dt span {
   text-transform: none;
 }
 
+/*
+ * The four dates all cross the viewport together, so one shared scroll range
+ * would land them in the same instant. Pushing each one's range a little
+ * further into its own entry staggers the band left to right — the same effect
+ * as the `delay` prop on Rise, expressed in scroll distance instead of time,
+ * and with no timer to run. The .rise-on-scroll base rule lives in globals.css.
+ */
+@supports (animation-timeline: view()) {
+  .dt {
+    --rise-from: 14px;
+  }
+
+  .dt:nth-child(2) {
+    animation-range: cover 5% cover 27%;
+  }
+
+  .dt:nth-child(3) {
+    animation-range: cover 9% cover 31%;
+  }
+
+  .dt:nth-child(4) {
+    animation-range: cover 13% cover 35%;
+  }
+}
+
 /* ================= sections ================= */
 .section {
   padding: 106px 0;
@@ -343,6 +368,25 @@ html[lang='bn'] .fig b {
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 0.86;
+}
+
+/* the numerals are set very large, so they travel further than the dates do */
+@supports (animation-timeline: view()) {
+  .fig {
+    --rise-from: 30px;
+  }
+
+  .figtxt {
+    animation-range: cover 8% cover 30%;
+  }
+
+  .f2 {
+    animation-range: cover 4% cover 26%;
+  }
+
+  .f3 {
+    animation-range: cover 8% cover 30%;
+  }
 }
 
 .lb {

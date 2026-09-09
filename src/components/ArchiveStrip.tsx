@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   useAnimationFrame,
+  useInView,
   useMotionValue,
   useTransform,
   motion,
@@ -92,6 +93,16 @@ function Reel({
   const drag = useRef({ active: false, lastX: 0, moved: 0 });
 
   /*
+   * The frame loop below is the most expensive thing on the page: it advances
+   * the track and writes --f on up to forty-four plates, every frame, forever.
+   * None of that is worth doing while the strip is off-screen — which is most
+   * of the time, since the page is long and the reel occupies one band of it.
+   * Gating on visibility leaves the reel exactly where it was when it left the
+   * viewport, so it resumes rather than jumping.
+   */
+  const onScreen = useInView(viewportRef);
+
+  /*
    * Layout geometry, sampled only when the layout actually changes. The frame
    * loop below used to call getBoundingClientRect() once per plate — twenty-two
    * forced synchronous layouts every frame, which is what made the reel stutter
@@ -157,6 +168,8 @@ function Reel({
   useAnimationFrame((_, delta) => {
     const { centres, line, reach } = geometry.current;
     if (!half || !reach) return;
+    /* a drag can outlive the strip leaving the viewport, so it still wins */
+    if (!onScreen && !drag.current.active) return;
 
     if (!paused.current && !drag.current.active) {
       baseX.set(baseX.get() - SPEED * (delta / 1000));

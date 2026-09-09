@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Develop } from '@/components/Motion';
 import { ui, type Course, type Locale } from '@/content/site';
-import s from '@/app/[locale]/page.module.css';
+import s from '@/styles/page.module.css';
 import m from './CourseArticle.module.css';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
