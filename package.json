@@ -29,7 +29,7 @@
     "social:assets": "node scripts/build-social-assets.mjs"
   },
   "dependencies": {
-    "framer-motion": "^13.1.1",
+    "framer-motion": "^13.4.3",
     "next": "16.3.5",
     "react": "19.3.0",
     "react-dom": "19.3.0"
