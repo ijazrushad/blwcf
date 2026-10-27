@@ -343,7 +343,16 @@ function Slide({
           alt=""
           width={item.width}
           height={item.height}
-          sizes="(max-width: 700px) 44vw, 26vw"
+          /* the slide is a fixed height (300 / 220 / 165px in the module
+             CSS) and its width follows the ratio, so the rendered width is
+             known exactly — a flat vw guess over-fetched portrait plates 3x */
+          sizes={[560, 900]
+            .map(
+              (bp, i) =>
+                `(max-width: ${bp}px) ${Math.ceil(([165, 220][i] * item.width) / item.height)}px`
+            )
+            .concat(`${Math.ceil((300 * item.width) / item.height)}px`)
+            .join(', ')}
           quality={88}
           draggable={false}
         />

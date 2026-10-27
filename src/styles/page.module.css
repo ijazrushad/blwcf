@@ -23,12 +23,22 @@
   overflow: hidden;
 }
 
-/* permanent Bengali watermark — present in BOTH languages */
+/* permanent Bengali watermark — present in BOTH languages
+
+   The holder's box must not depend on the font. Sized by its own glyphs and
+   centred with translate(-50%, -50%), it moved every time Baloo Da 2 swapped
+   in over the fallback, and at 620px that was the largest layout shift on
+   /bn (CLS 0.11 on CI). Instead it spans twice the hero, centred on the same
+   point, so the word can overflow either side at narrow widths and still sit
+   centred. The word's height is pinned for the same reason: a Bengali
+   fallback with taller metrics grows the line box past its line-height. */
 .watermarkHolder {
   position: absolute;
-  left: 50%;
+  left: -50%;
+  right: -50%;
   top: 38%;
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
+  text-align: center;
   z-index: 0;
   pointer-events: none;
   user-select: none;
@@ -39,6 +49,7 @@
   font-weight: 800;
   font-size: clamp(220px, 40vw, 620px);
   line-height: 1.05;
+  height: 1.05em;
   color: var(--green);
   opacity: 0.1;
   white-space: nowrap;
