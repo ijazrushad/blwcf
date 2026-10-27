@@ -1,6 +1,6 @@
 {
   "name": "blwcf",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Bilingual archive site for the 1st and 2nd Bangladesh War Courses, 1971-1972.",
   "license": "MIT",
@@ -30,18 +30,18 @@
     "social:assets": "node scripts/build-social-assets.mjs"
   },
   "dependencies": {
-    "framer-motion": "^13.1.1",
-    "next": "16.3.5",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "framer-motion": "^14.7.1",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
   "devDependencies": {
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.6.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9.39.5",
-    "eslint-config-next": "16.3.5",
-    "prettier": "^3.9.6",
+    "eslint-config-next": "16.4.3",
+    "prettier": "^3.9.10",
     "typescript": "^6.0.3"
   }
 }
