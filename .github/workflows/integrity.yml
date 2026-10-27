@@ -1,0 +1,99 @@
+name: Integrity
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+    # re-run when the review label is added or removed
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integrity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    name: Injected code scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      # Runs before `npm ci` on purpose: nothing from the tree is executed
+      # except the scanner itself, which has no dependencies.
+      - name: Scan tracked files
+        run: node scripts/check-integrity.mjs
+
+  sensitive:
+    name: Sensitive file review
+    # Only a pull request has a diff to show.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      BASE: ${{ github.event.pull_request.base.sha }}
+      HEAD: ${{ github.event.pull_request.head.sha }}
+      APPROVED: ${{ contains(github.event.pull_request.labels.*.name, 'sensitive-change-reviewed') }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # These files run on a developer's machine the moment the folder is
+      # opened or `npm run dev` is typed — the September 2026 payload lived in
+      # eslint.config.mjs. A change to any of them needs a human to read the
+      # whitespace-visible diff below and add the `sensitive-change-reviewed`
+      # label.
+      - name: Show whitespace-visible diff of sensitive files
+        run: |
+          files=$(git diff --name-only "$BASE...$HEAD" -- \
+            'eslint.config.*' 'next.config.*' 'postcss.config.*' 'tailwind.config.*' \
+            'prettier.config.*' '.prettierrc*' 'package.json' '.npmrc' '.nvmrc' \
+            'scripts/**' '.github/**' '.vscode/**' '.husky/**')
+
+          if [ -z "$files" ]; then
+            echo "No sensitive files changed."
+            exit 0
+          fi
+
+          {
+            echo "## Sensitive files changed"
+            echo
+            echo "Tabs show as \`^I\`, line ends as \`\$\`. Read every added line to its end."
+            echo
+            for f in $files; do
+              echo "### \`$f\`"
+              echo '```diff'
+              # cut keeps the summary readable; the length is reported separately
+              git diff --no-color "$BASE...$HEAD" -- "$f" | cat -A | cut -c1-400
+              echo '```'
+              long=$(git diff --no-color "$BASE...$HEAD" -- "$f" | awk '/^\+/ && length > 300 { print NR": "length" chars" }')
+              if [ -n "$long" ]; then
+                echo "> **Warning: added lines longer than 300 characters**"
+                echo "$long" | sed 's/^/> /'
+              fi
+            done
+            echo "package.json scripts on this branch:"
+            echo '```json'
+            node -e 'console.log(JSON.stringify(require("./package.json").scripts, null, 2))'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "Changed: $files"
+          if [ "$APPROVED" != "true" ]; then
+            echo "::error::Sensitive files changed. Review the diff in the job summary, then add the 'sensitive-change-reviewed' label."
+            exit 1
+          fi
+          echo "Label present — reviewed."

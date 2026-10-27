@@ -21,6 +21,13 @@
 - [ ] Checked at a narrow width (≤ 700px) as well as desktop
 - [ ] Checked with "reduce motion" enabled if this touches animation
 
+## If this touches a config file, `package.json` or `scripts/`
+
+- [ ] Read the whitespace-visible diff (`git diff --ws-error-highlight=all`, or the
+      _Sensitive file review_ job summary) — every added line, to its end
+- [ ] No `package.json` script runs a new file with `node`
+- [ ] Added the `sensitive-change-reviewed` label
+
 ## If this adds or replaces an archive scan
 
 - [ ] The file is in `public/archive/`

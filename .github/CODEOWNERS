@@ -8,6 +8,15 @@
 /next.config.ts         @ijazrushad
 /SECURITY.md            @ijazrushad
 
+# Files that execute on a developer's machine when the folder is opened or
+# `npm run dev` is typed. The September 2026 payload hid in eslint.config.mjs.
+/eslint.config.*        @ijazrushad
+/postcss.config.*       @ijazrushad
+/package.json           @ijazrushad
+/package-lock.json      @ijazrushad
+/scripts/               @ijazrushad
+/.vscode/               @ijazrushad
+
 # The historical record: names, dates, unit designations and the Bengali
 # translations. Changes here are checked against a source, not just reviewed
 # for style.
