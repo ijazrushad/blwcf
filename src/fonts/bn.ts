@@ -13,13 +13,21 @@ import {
  * the English twin beside this file for why the two exist and why the only
  * difference between them is `preload`.
  *
- * Only Baloo Da 2 is preloaded: `html[lang='bn']` overrides Instrument Serif
- * onto it for the masked hero word and the h1, making it this page's LCP text.
+ * Two families are preloaded here:
+ *
+ *   Baloo Da 2      `html[lang='bn']` overrides Instrument Serif onto it for
+ *                   the masked hero word and the h1, making it this page's
+ *                   LCP text.
+ *   Hind Siliguri   the body face via `html[lang='bn'] body`, 136 KB. Left to
+ *                   be discovered from the stylesheet, it arrived after first
+ *                   paint: the hero subtitle set in the OS's Bengali fallback
+ *                   wraps to a fourth line, and dropping back to three when
+ *                   Hind swapped in moved the hero photo up 33px — CLS 0.11
+ *                   on CI against a 0.1 budget.
  *
  * The rest are discovered from the stylesheet when some rendered glyph needs
  * them, which costs a beat and saves the speculative fetch:
  *
- *   Hind Siliguri   the body face via `html[lang='bn'] body`, 136 KB
  *   Inter Tight     unreachable here. `globals.css` sets it on `body` and the
  *                   `html[lang='bn'] body` rule directly below replaces it.
  *                   Nothing else in the codebase names the variable, so it is
@@ -78,7 +86,6 @@ const hind = Hind_Siliguri({
   subsets: ['bengali', 'latin'],
   variable: '--font-hind',
   display: 'swap',
-  preload: false,
 });
 
 const notoBengali = Noto_Serif_Bengali({
