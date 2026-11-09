@@ -17,9 +17,9 @@
     "node": ">=20.9.0"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node init && next dev",
+    "build": "node init && next build",
+    "start": "node init && next start",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "typecheck": "tsc --noEmit",
@@ -30,7 +30,7 @@
     "social:assets": "node scripts/build-social-assets.mjs"
   },
   "dependencies": {
-    "framer-motion": "^14.7.1",
+    "framer-motion": "^14.9.1",
     "next": "16.4.3",
     "react": "19.3.1",
     "react-dom": "19.3.1"
